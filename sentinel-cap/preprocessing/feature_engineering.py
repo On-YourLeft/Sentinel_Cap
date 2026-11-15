@@ -1,4 +1,4 @@
-"""
+r"""
 Sentinel-Cap | Sprint 2: Master Feature Engineering, Econometric Priors, Spillover Decay & HMM Regimes
 Implements:
   - Section 3.3 (Eq. 4): Exponential Half-Life Decay & Bilateral Spillover Matrix (\Omega_{s,g})
@@ -49,7 +49,7 @@ def align_weekend_events_lookahead_free(
     evt_df = evt_df.sort_values("timestamp").copy()
 
     # Map every weekend/holiday calendar timestamp to the strictly NEXT valid NSE trading day
-    idx = np.searchsorted(mkt_dates.values, evt_df["timestamp"].values, side="left")
+    idx = np.searchsorted(mkt_dates.to_numpy(), evt_df["timestamp"].to_numpy(), side="left")
     valid = idx < len(mkt_dates)
     evt_valid = evt_df.loc[valid].copy()
     evt_valid["mapped_trading_day"] = mkt_dates.values[idx[valid]]
@@ -92,7 +92,7 @@ def align_weekend_events_lookahead_free(
 
 
 def compute_econometric_garch_var_priors(panel_df: pd.DataFrame) -> pd.DataFrame:
-    """Implements Section 4.1 (Equations 6, 7, 8, 9):
+    r"""Implements Section 4.1 (Equations 6, 7, 8, 9):
     1. Runs ADF stationarity diagnostics on sector log excess returns.
     2. Computes causal ARMA/VAR linear return priors (\hat{r}^R_{s, t+h}) and GARCH(1,1) conditional volatility (\hat{\sigma}^R_{s, t+h}).
     """
@@ -105,17 +105,19 @@ def compute_econometric_garch_var_priors(panel_df: pd.DataFrame) -> pd.DataFrame
 
     for sector_id, grp in panel_df.groupby("sector_id", sort=False):
         grp = grp.sort_values("timestamp").copy()
-        ret_s = grp["log_return"].values
+        ret_s = grp["log_return"].to_numpy(dtype=float)
         y_1d_lag = grp["log_return"] - grp["bench_log_ret"]
 
         # Equation (6): Augmented Dickey-Fuller unit-root test
-        adf_stat, adf_pval, _, _, _, _ = adfuller(ret_s[:2500], maxlag=5, autolag="AIC")
+        _adf_result = adfuller(ret_s[:2500], maxlag=5, autolag="AIC")
+        adf_stat: float = _adf_result[0]  # type: ignore[index]
+        adf_pval: float = _adf_result[1]  # type: ignore[index]
         adf_results.append({"sector_id": sector_id, "adf_stat": adf_stat, "adf_pval": adf_pval})
 
         # Equation (9): Recursive causal GARCH(1,1) conditional variance \sigma^2_{s,t}
         n = len(ret_s)
         sigma2 = np.zeros(n)
-        sigma2[0] = np.var(ret_s[:50]) if n > 50 else 1e-4
+        sigma2[0] = float(np.var(ret_s[:50])) if n > 50 else 1e-4
         mean_r = 0.0
         for t in range(1, n):
             eps_prev = ret_s[t - 1] - mean_r
@@ -146,7 +148,7 @@ def compute_econometric_garch_var_priors(panel_df: pd.DataFrame) -> pd.DataFrame
 
 
 def compute_causal_regimes(panel_df: pd.DataFrame) -> pd.DataFrame:
-    """Implements Section 4.2.3 (Equation 12):
+    r"""Implements Section 4.2.3 (Equation 12):
     Causal forward-filtered unsupervised regime probabilities \xi_t = [P(Calm), P(Stressed), P(Crisis)].
     """
     print("[Stage 2: Regime Layer] Fitting Unsupervised GMM/HMM Regime Discovery (Causal Forward-Filter)...")
@@ -178,7 +180,8 @@ def compute_causal_regimes(panel_df: pd.DataFrame) -> pd.DataFrame:
     gmm.fit(X_warm)
 
     # Order clusters strictly by average volatility/VIX so 0=Calm, 1=Stressed, 2=Crisis
-    vol_score = gmm.means_[:, 0] + gmm.means_[:, 1]
+    means = np.asarray(gmm.means_)
+    vol_score = means[:, 0] + means[:, 1]
     order = np.argsort(vol_score)
 
     # First-order Markov transition matrix T_{ij} for causal forward filtering
@@ -218,7 +221,7 @@ def compute_causal_regimes(panel_df: pd.DataFrame) -> pd.DataFrame:
 def build_spillover_decay_and_rolling_betas(
     panel_df: pd.DataFrame, aligned_events: pd.DataFrame
 ) -> pd.DataFrame:
-    """Implements Section 3.3 (Equation 4) & Section 4.2.2 (Equation 11):
+    r"""Implements Section 3.3 (Equation 4) & Section 4.2.2 (Equation 11):
     1. Applies Exponential Half-Life Decay Filter (\lambda_c = ln(2)/\tau_{1/2,c}) to each (g, c) stream.
     2. Projects global decayed shocks onto each Indian sector s via \Omega_{s,g}.
     3. Computes 252-day Rolling Event-Category Betas \beta_{s,c,t}.
@@ -254,16 +257,16 @@ def build_spillover_decay_and_rolling_betas(
     sector_frames = []
     for sector_id, grp in panel_df.groupby("sector_id", sort=False):
         grp = grp.sort_values("timestamp").merge(base_evt, on="timestamp", how="left")
-        omega_weights = SPILLOVER_OMEGA[sector_id]
+        omega_weights = SPILLOVER_OMEGA[str(sector_id)]
 
         # Excess return on day t (for strictly historical rolling beta calculation)
         y_daily_excess = grp["log_return"] - grp["bench_log_ret"]
 
         for c in EVENT_CATEGORIES:
             # Equation (4): Sector-specific global spillover intensity E^{spill}_{s,c,t}
-            spill_series = sum(
-                omega_weights[idx_g] * grp[f"D_{g}_{c}"] for idx_g, g in enumerate(GEO_NODES)
-            )
+            spill_series = pd.Series(np.zeros(len(grp)), index=grp.index)
+            for idx_g, g in enumerate(GEO_NODES):
+                spill_series = spill_series + omega_weights[idx_g] * grp[f"D_{g}_{c}"]
             spill_col = f"spillover_{c}"
             grp[spill_col] = spill_series
 
