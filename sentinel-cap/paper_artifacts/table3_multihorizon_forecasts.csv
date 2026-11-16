@@ -1,0 +1,7 @@
+Model_Architecture,h1_RMSE,h1_RankIC,h5_RMSE,h5_RankIC,h5_ICIR,h20_RankIC,DM_Stat_vs_VAR
+"R: ARIMA(p,0,q)+GARCH(1,1)",0.0086,0.006,0.0158,-0.0274,-0.41,-0.0293,Baseline
+R: Multivariate VAR(p)+GPR,0.0086,0.0091,0.0158,-0.022,-0.34,-0.0241,Baseline
+Python: Elastic Net (Linear),0.0086,0.0195,0.0158,-0.0148,-0.23,-0.017,-0.01* (p=0.990)
+Python: Sequential LSTM,0.0106,0.0147,0.0166,0.1023,1.73,0.2011,-8.89*** (p=0.000)
+Python: Event XGBoost (No Regime),0.0086,0.0865,0.0152,0.1982,3.23,0.1831,+17.67*** (p=0.000)
+Sentinel-Cap Hybrid Ensemble,0.0086,0.1006,0.0151,0.2057,3.38,0.2072,+16.73*** (p=0.000)

@@ -91,13 +91,21 @@ def generate_global_gdelt_and_nlp_events(
 
     if gpr_path.exists():
         gpr_df = pd.read_parquet(gpr_path)[
-            ["timestamp", "gpr_score", "gpr_acts", "gpr_threats", "gpr_zscore_60d"]
+            [
+                "timestamp",
+                "gpr_score",
+                "gpr_acts",
+                "gpr_threats",
+                "gpr_log_change",
+                "gpr_zscore_60d",
+            ]
         ]
         df_cal = df_cal.merge(gpr_df, on="timestamp", how="left")
     else:
         df_cal["gpr_score"] = 100.0
         df_cal["gpr_acts"] = 100.0
         df_cal["gpr_threats"] = 100.0
+        df_cal["gpr_log_change"] = 0.0
         df_cal["gpr_zscore_60d"] = 0.0
 
     if mkt_path.exists():

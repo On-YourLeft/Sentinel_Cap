@@ -19,19 +19,26 @@ from statsmodels.tsa.stattools import adfuller
 
 warnings.filterwarnings("ignore")
 
+PROJECT_ROOT = Path(__file__).resolve().parents[1]
+
 from sys import path as sys_path
 sys_path.append(str(Path(__file__).resolve().parents[1]))
 from extraction.gdelt_ingest import EVENT_CATEGORIES, GEO_NODES, SPILLOVER_OMEGA
 
 
 def align_weekend_events_lookahead_free(
-    mkt_df: pd.DataFrame, evt_df: pd.DataFrame, interim_dir: str = "data/02_interim"
+    mkt_df: pd.DataFrame, evt_df: pd.DataFrame
 ) -> pd.DataFrame:
-    """Executes R xts/zoo::na.locf script if R + arrow are installed, otherwise runs exact Python equivalent."""
-    r_out_path = Path(interim_dir) / "r_aligned_events.parquet"
+    r"""Executes R xts/zoo::na.locf script if R + arrow are installed, otherwise runs exact Python equivalent."""
+    interim_dir = PROJECT_ROOT / "data" / "02_interim"
+    interim_dir.mkdir(parents=True, exist_ok=True)
+    r_out_path = interim_dir / "r_aligned_events.parquet"
+    r_script_path = PROJECT_ROOT / "preprocessing" / "align_timeseries.R"
+
     try:
         res = subprocess.run(
-            ["Rscript", "preprocessing/align_timeseries.R"],
+            ["Rscript", str(r_script_path)],
+            cwd=str(PROJECT_ROOT),
             capture_output=True,
             text=True,
             timeout=60,
@@ -45,11 +52,12 @@ def align_weekend_events_lookahead_free(
         pass
 
     print("[Refinery] Executing Equation (5) Weekend Accumulation & na.locf Alignment...")
-    mkt_dates = pd.Series(sorted(mkt_df["timestamp"].unique()), name="trading_day")
-    evt_df = evt_df.sort_values("timestamp").copy()
+    mkt_dates = pd.DatetimeIndex(sorted(mkt_df["timestamp"].unique()))
+    evt_df = evt_df.drop_duplicates(subset=["timestamp"]).sort_values("timestamp").copy()
+    evt_dates = pd.DatetimeIndex(evt_df["timestamp"])
 
     # Map every weekend/holiday calendar timestamp to the strictly NEXT valid NSE trading day
-    idx = np.searchsorted(mkt_dates.to_numpy(), evt_df["timestamp"].to_numpy(), side="left")
+    idx = np.searchsorted(mkt_dates.values, evt_dates.values, side="left")
     valid = idx < len(mkt_dates)
     evt_valid = evt_df.loc[valid].copy()
     evt_valid["mapped_trading_day"] = mkt_dates.values[idx[valid]]
@@ -75,21 +83,21 @@ def align_weekend_events_lookahead_free(
     )
 
     # Forward-fill continuous macro/sentiment states (na.locf) strictly from past calendar days
+    union_dates = evt_dates.union(mkt_dates).sort_values()
     cont_grid = (
         evt_df.set_index("timestamp")[cont_cols]
-        .reindex(evt_df["timestamp"].union(mkt_dates))
+        .reindex(union_dates)
         .sort_index()
         .ffill()
         .bfill()
-        .reindex(mkt_dates.values)
+        .reindex(mkt_dates)
+        .rename_axis("timestamp")
         .reset_index()
-        .rename(columns={"index": "timestamp"})
     )
 
     aligned = pd.merge(agg_impulses, cont_grid, on="timestamp", how="inner")
     aligned.to_parquet(r_out_path, index=False)
     return aligned
-
 
 def compute_econometric_garch_var_priors(panel_df: pd.DataFrame) -> pd.DataFrame:
     r"""Implements Section 4.1 (Equations 6, 7, 8, 9):
@@ -297,6 +305,15 @@ def run_feature_engineering_pipeline():
 
     mkt_df = pd.read_parquet(mkt_path)
     evt_df = pd.read_parquet(evt_path)
+
+    # Ensure gpr_log_change exists and sanitize any +/-inf from log(0)
+    if "gpr_log_change" not in evt_df.columns:
+        safe_gpr = evt_df["gpr_score"].clip(lower=1.0)
+        evt_df["gpr_log_change"] = pd.Series(
+            np.log(safe_gpr / safe_gpr.shift(1)), index=evt_df.index
+        ).fillna(0.0)
+    evt_df.replace([np.inf, -np.inf], 0.0, inplace=True)
+    evt_df.fillna(0.0, inplace=True)
 
     # Clean any +/-inf from log(0) in raw GPR series
     evt_df.replace([np.inf, -np.inf], 0.0, inplace=True)

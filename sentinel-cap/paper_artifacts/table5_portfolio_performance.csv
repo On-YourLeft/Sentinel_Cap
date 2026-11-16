@@ -1,0 +1,6 @@
+Strategy,CAGR_pct,Ann_Vol_pct,Net_Sharpe,Deflated_SR,Max_DD_pct,Crisis_Alpha_pct
+NIFTY 50 Buy & Hold (NIFTYBEES),8.62,20.5,0.29,0.27,-59.86,Benchmark (0.0%)
+Equal-Weighted Sector Portfolio (1/S),10.84,13.61,0.49,0.48,-37.06,+1.47%
+R Econometric VAR + Standard MVO,10.85,11.57,0.56,0.53,-44.54,+14.48%
+Raw XGBoost Point-Forecast (Unconstrained),28.6,13.19,1.63,1.58,-46.23,+42.39%
+Sentinel-Cap (Hybrid + Black-Litterman),26.66,11.89,1.67,1.62,-32.88,+45.61%

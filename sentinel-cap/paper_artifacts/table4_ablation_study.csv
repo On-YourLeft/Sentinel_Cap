@@ -1,0 +1,7 @@
+Ablation_Stage,RankIC,DA_pct,Net_Sharpe,Sortino,Max_DD_pct,Hypothesis
+M1: Price Only,0.0664,51.41,0.77,1.11,-38.12,Baseline
+M2: + Macro Controls,0.1092,53.57,1.19,1.72,-34.1,Macro Control
+M3: + Scalar NLP (TextBlob+GPR),0.1328,54.33,1.12,1.6,-34.77,Polarity Limit
+M4: + Multi-Class Geo Spillover,0.2005,56.16,1.7,2.37,-43.98,Proves H1
+M5: + Unsupervised HMM Regimes,0.2332,57.68,1.91,2.71,-37.17,Proves H2
+M6: Full Sentinel-Cap (Hybrid+BL),0.2057,56.63,1.67,2.41,-32.88,"Proves H3, H4"
