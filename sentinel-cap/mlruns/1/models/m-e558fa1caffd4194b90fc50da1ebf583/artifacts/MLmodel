@@ -1,0 +1,23 @@
+artifact_path: /home/alpha/AIML/sentinel_cap/sentinel-cap/mlruns/1/models/m-e558fa1caffd4194b90fc50da1ebf583/artifacts
+flavors:
+  python_function:
+    env:
+      conda: conda.yaml
+      virtualenv: python_env.yaml
+    loader_module: mlflow.sklearn
+    model_path: model.pkl
+    predict_fn: predict
+    python_version: 3.14.4
+  sklearn:
+    code: null
+    pickled_model: model.pkl
+    serialization_format: cloudpickle
+    sklearn_version: 1.9.1
+    skops_trusted_types: null
+mlflow_version: 3.18.0
+model_id: m-e558fa1caffd4194b90fc50da1ebf583
+model_size_bytes: 85581
+model_uuid: m-e558fa1caffd4194b90fc50da1ebf583
+prompts: null
+run_id: 0328fb5287e44e00850e58275c6ff120
+utc_time_created: '2026-11-18 05:06:26.989847'

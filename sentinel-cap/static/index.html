@@ -1,0 +1,309 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Sentinel-Cap | Geopolitical Sector Allocation Terminal</title>
+  <style>
+    :root {
+      --bg: #0b1120;
+      --panel: #111827;
+      --panel-alt: #1e293b;
+      --border: #334155;
+      --text: #f1f5f9;
+      --muted: #94a3b8;
+      --accent: #14b8a6;
+      --accent-blue: #3b82f6;
+      --danger: #ef4444;
+      --warn: #f59e0b;
+      --success: #10b981;
+    }
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+      background: var(--bg);
+      color: var(--text);
+      line-height: 1.5;
+      padding: 24px;
+    }
+    .container { max-width: 1220px; margin: 0 auto; }
+    header {
+      display: flex; flex-wrap: wrap; justify-content: space-between; align-items: center;
+      border-bottom: 1px solid var(--border); padding-bottom: 16px; margin-bottom: 24px;
+      gap: 12px;
+    }
+    .brand h1 { font-size: 1.45rem; letter-spacing: 0.5px; color: #fff; }
+    .brand span { color: var(--accent); }
+    .brand p { font-size: 0.85rem; color: var(--muted); }
+    .nav-links a {
+      color: var(--accent-blue); text-decoration: none; font-size: 0.85rem;
+      border: 1px solid var(--border); padding: 6px 12px; border-radius: 6px; margin-left: 8px;
+      background: var(--panel);
+    }
+    .nav-links a:hover { border-color: var(--accent); color: #fff; }
+    .presets { display: flex; flex-wrap: wrap; gap: 10px; margin-bottom: 20px; align-items: center; }
+    .presets span { font-size: 0.82rem; color: var(--muted); font-weight: 600; text-transform: uppercase; }
+    .preset-btn {
+      background: var(--panel-alt); color: var(--text); border: 1px solid var(--border);
+      padding: 6px 12px; border-radius: 6px; font-size: 0.82rem; cursor: pointer;
+    }
+    .preset-btn:hover { border-color: var(--accent); background: #0f172a; }
+    .grid { display: grid; grid-template-columns: 1.05fr 1.15fr; gap: 22px; }
+    @media (max-width: 900px) { .grid { grid-template-columns: 1fr; } }
+    .card { background: var(--panel); border: 1px solid var(--border); border-radius: 10px; padding: 20px; }
+    .card h2 {
+      font-size: 0.95rem; text-transform: uppercase; letter-spacing: 0.6px;
+      color: var(--accent); margin-bottom: 16px; border-bottom: 1px solid var(--border); padding-bottom: 8px;
+    }
+    .form-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; }
+    .form-group { display: flex; flex-direction: column; }
+    .form-group.full { grid-column: span 2; }
+    label { font-size: 0.78rem; color: var(--muted); margin-bottom: 4px; font-weight: 600; }
+    input, select {
+      background: #0f172a; border: 1px solid var(--border); color: var(--text);
+      padding: 8px 10px; border-radius: 6px; font-size: 0.9rem;
+    }
+    input:focus, select:focus { outline: none; border-color: var(--accent); }
+    .submit-btn {
+      width: 100%; margin-top: 18px; padding: 12px; background: var(--accent);
+      color: #042f2e; font-weight: 700; font-size: 0.95rem; border: none; border-radius: 6px;
+      cursor: pointer; letter-spacing: 0.4px;
+    }
+    .submit-btn:hover { background: #2dd4bf; }
+    .kpi-row { display: grid; grid-template-columns: repeat(3, 1fr); gap: 12px; margin-bottom: 18px; }
+    .kpi { background: #0f172a; border: 1px solid var(--border); border-radius: 8px; padding: 12px; }
+    .kpi .k-label { font-size: 0.72rem; color: var(--muted); text-transform: uppercase; }
+    .kpi .k-val { font-size: 1.35rem; font-weight: 700; margin-top: 4px; }
+    .badge { display: inline-block; padding: 3px 9px; border-radius: 999px; font-size: 0.75rem; font-weight: 700; }
+    .badge-calm { background: rgba(16,185,129,0.18); color: #34d399; border: 1px solid #059669; }
+    .badge-stress { background: rgba(245,158,11,0.18); color: #fbbf24; border: 1px solid #d97706; }
+    .badge-crisis { background: rgba(239,68,68,0.18); color: #f87171; border: 1px solid #dc2626; }
+    .shap-list { margin-top: 10px; margin-bottom: 18px; }
+    .shap-item { margin-bottom: 10px; }
+    .shap-header { display: flex; justify-content: space-between; font-size: 0.8rem; margin-bottom: 3px; }
+    .bar-bg { background: #0f172a; height: 8px; border-radius: 4px; overflow: hidden; border: 1px solid #1e293b; }
+    .bar-fill { height: 100%; border-radius: 4px; }
+    .tips-box { background: #0f172a; border: 1px solid var(--border); border-radius: 8px; padding: 14px; }
+    .tips-box h3 { font-size: 0.82rem; color: var(--warn); text-transform: uppercase; margin-bottom: 8px; }
+    .tips-box ul { padding-left: 18px; font-size: 0.84rem; color: #e2e8f0; }
+    .tips-box li { margin-bottom: 6px; }
+    .error-banner {
+      display: none; background: rgba(239,68,68,0.15); border: 1px solid var(--danger);
+      color: #fca5a5; padding: 10px; border-radius: 6px; margin-top: 12px; font-size: 0.84rem;
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <header>
+      <div class="brand">
+        <h1>SENTINEL-<span>CAP</span> // QUANT MACRO TERMINAL</h1>
+        <p>Geopolitical Risk Transmission, Causal HMM Regimes &amp; Black-Litterman Sector Allocator</p>
+      </div>
+      <div class="nav-links">
+        <a href="/docs" target="_blank">Swagger API (/docs)</a>
+        <a href="/health" target="_blank">System Health (/health)</a>
+      </div>
+    </header>
+
+    <div class="presets">
+      <span>Quick Scenarios:</span>
+      <button class="preset-btn" type="button" onclick="applyPreset('conflict_gold')">1. Armed Conflict Spike (GOLD Hedge)</button>
+      <button class="preset-btn" type="button" onclick="applyPreset('conflict_bank')">2. Armed Conflict Spike (BANKING Risk)</button>
+      <button class="preset-btn" type="button" onclick="applyPreset('calm_it')">3. Calm Bull Regime (IT Tailwind)</button>
+    </div>
+
+    <div class="grid">
+      <div class="card">
+        <h2>1. Pre-Market State Vector (Data Contract)</h2>
+        <form id="predictForm">
+          <div class="form-grid">
+            <div class="form-group full">
+              <label for="sector_id">Target NSE Sector / Safe-Haven Proxy</label>
+              <select id="sector_id" name="sector_id">
+                <option value="GOLD">GOLD (GOLDBEES.NS - Safe Haven)</option>
+                <option value="BANKING">BANKING (BANKBEES.NS - Financials)</option>
+                <option value="ENERGY">ENERGY (CPSEETF.NS - Oil &amp; Gas)</option>
+                <option value="IT">IT (SETFNIFIT.NS - Tech Exports)</option>
+                <option value="INFRA">INFRA (INFRABEES.NS - Infrastructure)</option>
+                <option value="FMCG">FMCG (FMCGIETF.NS - Consumer)</option>
+                <option value="PHARMA">PHARMA (PHARMABEES.NS - Healthcare)</option>
+                <option value="GILT_DEBT">GILT_DEBT (GILTBEES.NS - Sovereign Debt)</option>
+              </select>
+            </div>
+            <div class="form-group">
+              <label for="spillover_c1_armed_conflict">Armed Conflict Spillover [0 to 50]</label>
+              <input type="number" step="0.1" id="spillover_c1_armed_conflict" value="12.5" required />
+            </div>
+            <div class="form-group">
+              <label for="regime_prob_crisis">HMM Crisis Probability [0.0 to 1.0]</label>
+              <input type="number" step="0.01" id="regime_prob_crisis" value="0.82" required />
+            </div>
+            <div class="form-group">
+              <label for="gpr_zscore_60d">Caldara GPR 60d Z-Score [-4 to 10]</label>
+              <input type="number" step="0.1" id="gpr_zscore_60d" value="2.4" required />
+            </div>
+            <div class="form-group">
+              <label for="finbert_sentiment">FinBERT Net Polarity [-1.0 to 1.0]</label>
+              <input type="number" step="0.05" id="finbert_sentiment" value="-0.45" required />
+            </div>
+            <div class="form-group">
+              <label for="vix_level">India VIX Level [8.0 to 90.0]</label>
+              <input type="number" step="0.5" id="vix_level" value="28.5" required />
+            </div>
+            <div class="form-group">
+              <label for="crude_mom_20d">20d Brent Crude Momentum [-1 to 1]</label>
+              <input type="number" step="0.01" id="crude_mom_20d" value="0.14" required />
+            </div>
+            <div class="form-group">
+              <label for="ret_lag_5d">Trailing 5d Sector Log Return [-0.5 to 0.5]</label>
+              <input type="number" step="0.005" id="ret_lag_5d" value="0.015" required />
+            </div>
+            <div class="form-group">
+              <label for="realized_vol_20d">20d Realized Volatility [0.01 to 1.5]</label>
+              <input type="number" step="0.01" id="realized_vol_20d" value="0.24" required />
+            </div>
+          </div>
+          <button type="submit" class="submit-btn">Compute Black-Litterman Signal &amp; SHAP</button>
+          <div id="errorBanner" class="error-banner"></div>
+        </form>
+      </div>
+
+      <div class="card">
+        <h2>2. Model Output, TreeSHAP Drivers &amp; Allocation Tips</h2>
+        <div class="kpi-row">
+          <div class="kpi">
+            <div class="k-label">5d Excess Return</div>
+            <div class="k-val" id="kpiBps">+0.0 bps</div>
+          </div>
+          <div class="kpi">
+            <div class="k-label">Target BL Weight</div>
+            <div class="k-val" id="kpiWeight" style="color: var(--accent);">12.5%</div>
+          </div>
+          <div class="kpi">
+            <div class="k-label">Latent Market State</div>
+            <div style="margin-top: 8px;"><span id="kpiRegime" class="badge badge-crisis">CRISIS REGIME</span></div>
+          </div>
+        </div>
+        <div style="font-size: 0.85rem; margin-bottom: 12px; color: var(--muted);">
+          Allocation Verdict: <strong id="kpiVerdict" style="color: #fff;">—</strong>
+        </div>
+        <h3 style="font-size: 0.8rem; text-transform: uppercase; color: var(--muted); margin-bottom: 6px;">
+          Top Live TreeSHAP Feature Attributions (bps)
+        </h3>
+        <div id="shapContainer" class="shap-list"></div>
+        <div class="tips-box">
+          <h3>Rule-Based Portfolio Execution Tips</h3>
+          <ul id="tipsList">
+            <li>Submit a pre-market state vector to generate Black-Litterman execution guidance.</li>
+          </ul>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    const PRESETS = {
+      conflict_gold: {
+        sector_id: "GOLD", ret_lag_5d: 0.018, realized_vol_20d: 0.22,
+        vix_level: 29.0, crude_mom_20d: 0.16, gpr_zscore_60d: 2.6,
+        finbert_sentiment: -0.50, spillover_c1_armed_conflict: 14.0, regime_prob_crisis: 0.85
+      },
+      conflict_bank: {
+        sector_id: "BANKING", ret_lag_5d: -0.025, realized_vol_20d: 0.34,
+        vix_level: 29.0, crude_mom_20d: 0.16, gpr_zscore_60d: 2.6,
+        finbert_sentiment: -0.50, spillover_c1_armed_conflict: 14.0, regime_prob_crisis: 0.85
+      },
+      calm_it: {
+        sector_id: "IT", ret_lag_5d: 0.022, realized_vol_20d: 0.15,
+        vix_level: 13.5, crude_mom_20d: -0.03, gpr_zscore_60d: -0.4,
+        finbert_sentiment: 0.55, spillover_c1_armed_conflict: 0.8, regime_prob_crisis: 0.08
+      }
+    };
+
+    function applyPreset(key) {
+      const p = PRESETS[key];
+      for (const [k, v] of Object.entries(p)) {
+        document.getElementById(k).value = v;
+      }
+      runPrediction();
+    }
+
+    async function runPrediction() {
+      const errBanner = document.getElementById("errorBanner");
+      errBanner.style.display = "none";
+
+      const payload = {
+        sector_id: document.getElementById("sector_id").value,
+        ret_lag_5d: parseFloat(document.getElementById("ret_lag_5d").value),
+        realized_vol_20d: parseFloat(document.getElementById("realized_vol_20d").value),
+        vix_level: parseFloat(document.getElementById("vix_level").value),
+        crude_mom_20d: parseFloat(document.getElementById("crude_mom_20d").value),
+        gpr_zscore_60d: parseFloat(document.getElementById("gpr_zscore_60d").value),
+        finbert_sentiment: parseFloat(document.getElementById("finbert_sentiment").value),
+        spillover_c1_armed_conflict: parseFloat(document.getElementById("spillover_c1_armed_conflict").value),
+        regime_prob_crisis: parseFloat(document.getElementById("regime_prob_crisis").value),
+      };
+
+      try {
+        const res = await fetch("/predict", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify(payload),
+        });
+        const data = await res.json();
+
+        if (!res.ok) {
+          errBanner.textContent = "Validation Error (HTTP " + res.status + "): " + JSON.stringify(data.detail);
+          errBanner.style.display = "block";
+          return;
+        }
+
+        const bpsEl = document.getElementById("kpiBps");
+        const sign = data.predicted_excess_return_bps >= 0 ? "+" : "";
+        bpsEl.textContent = `${sign}${data.predicted_excess_return_bps.toFixed(1)} bps`;
+        bpsEl.style.color = data.predicted_excess_return_bps >= 0 ? "#10b981" : "#ef4444";
+
+        document.getElementById("kpiWeight").textContent = `${data.recommended_bl_weight_pct.toFixed(1)}%`;
+        document.getElementById("kpiVerdict").textContent = data.signal_verdict;
+
+        const regEl = document.getElementById("kpiRegime");
+        regEl.textContent = data.regime_state;
+        regEl.className = "badge " + (
+          data.regime_state.includes("CRISIS") ? "badge-crisis" :
+          data.regime_state.includes("STRESSED") ? "badge-stress" : "badge-calm"
+        );
+
+        const shapDiv = document.getElementById("shapContainer");
+        shapDiv.innerHTML = "";
+        const maxAbs = Math.max(...data.top_shap_drivers.map(d => Math.abs(d.impact_bps)), 1);
+        data.top_shap_drivers.forEach(d => {
+          const pct = Math.min(100, (Math.abs(d.impact_bps) / maxAbs) * 100);
+          const color = d.impact_bps >= 0 ? "#10b981" : "#ef4444";
+          const s = d.impact_bps >= 0 ? "+" : "";
+          shapDiv.innerHTML += `
+            <div class="shap-item">
+              <div class="shap-header">
+                <span>${d.feature}</span>
+                <span style="color:${color}; font-weight:700;">${s}${d.impact_bps.toFixed(2)} bps</span>
+              </div>
+              <div class="bar-bg"><div class="bar-fill" style="width:${pct}%; background:${color};"></div></div>
+            </div>`;
+        });
+
+        const tipsUl = document.getElementById("tipsList");
+        tipsUl.innerHTML = data.allocation_tips.map(t => `<li>${t}</li>`).join("");
+      } catch (e) {
+        errBanner.textContent = "Request failed: " + e.message;
+        errBanner.style.display = "block";
+      }
+    }
+
+    document.getElementById("predictForm").addEventListener("submit", (e) => {
+      e.preventDefault();
+      runPrediction();
+    });
+    window.addEventListener("DOMContentLoaded", runPrediction);
+  </script>
+</body>
+</html>
