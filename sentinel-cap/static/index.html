@@ -3,230 +3,1521 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Sentinel-Cap | Geopolitical Sector Allocation Terminal</title>
+  <title>SENTINEL-CAP | Quantitative Geopolitical Sector Allocator</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=JetBrains+Mono:wght@500;600;700&display=swap" rel="stylesheet" />
   <style>
     :root {
-      --bg: #0b1120;
-      --panel: #111827;
-      --panel-alt: #1e293b;
-      --border: #334155;
-      --text: #f1f5f9;
-      --muted: #94a3b8;
-      --accent: #14b8a6;
-      --accent-blue: #3b82f6;
-      --danger: #ef4444;
-      --warn: #f59e0b;
-      --success: #10b981;
+      --bg: #070b14;
+      --card-bg: rgba(15, 23, 42, 0.75);
+      --card-border: rgba(148, 163, 184, 0.12);
+      --card-hover: rgba(30, 41, 59, 0.85);
+      --text-main: #f8fafc;
+      --text-muted: #94a3b8;
+      --text-dim: #64748b;
+      --accent: #10b981;
+      --accent-glow: rgba(16, 185, 129, 0.25);
+      --accent-blue: #38bdf8;
+      --danger: #f43f5e;
+      --danger-glow: rgba(244, 63, 94, 0.2);
+      --warn: #fbbf24;
+      --purple: #a855f7;
     }
+
     * { box-sizing: border-box; margin: 0; padding: 0; }
     body {
-      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
-      background: var(--bg);
-      color: var(--text);
-      line-height: 1.5;
-      padding: 24px;
+      font-family: 'Plus Jakarta Sans', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+      background: radial-gradient(circle at 15% 15%, #0f172a 0%, #070b14 60%, #020617 100%);
+      color: var(--text-main);
+      min-height: 100vh;
+      padding: 24px 20px 48px;
     }
-    .container { max-width: 1220px; margin: 0 auto; }
+
+    .container {
+      max-width: 1280px;
+      margin: 0 auto;
+    }
+
+    /* Header */
     header {
-      display: flex; flex-wrap: wrap; justify-content: space-between; align-items: center;
-      border-bottom: 1px solid var(--border); padding-bottom: 16px; margin-bottom: 24px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      flex-wrap: wrap;
+      gap: 16px;
+      padding-bottom: 20px;
+      border-bottom: 1px solid var(--card-border);
+      margin-bottom: 20px;
+    }
+    .brand-title {
+      display: flex;
+      align-items: center;
       gap: 12px;
     }
-    .brand h1 { font-size: 1.45rem; letter-spacing: 0.5px; color: #fff; }
-    .brand span { color: var(--accent); }
-    .brand p { font-size: 0.85rem; color: var(--muted); }
-    .nav-links a {
-      color: var(--accent-blue); text-decoration: none; font-size: 0.85rem;
-      border: 1px solid var(--border); padding: 6px 12px; border-radius: 6px; margin-left: 8px;
-      background: var(--panel);
+    .logo-badge {
+      background: linear-gradient(135deg, #059669, #0284c7);
+      color: white;
+      font-weight: 800;
+      font-size: 0.95rem;
+      padding: 6px 12px;
+      border-radius: 8px;
+      letter-spacing: 1px;
+      box-shadow: 0 0 20px rgba(16, 185, 129, 0.35);
     }
-    .nav-links a:hover { border-color: var(--accent); color: #fff; }
-    .presets { display: flex; flex-wrap: wrap; gap: 10px; margin-bottom: 20px; align-items: center; }
-    .presets span { font-size: 0.82rem; color: var(--muted); font-weight: 600; text-transform: uppercase; }
-    .preset-btn {
-      background: var(--panel-alt); color: var(--text); border: 1px solid var(--border);
-      padding: 6px 12px; border-radius: 6px; font-size: 0.82rem; cursor: pointer;
+    .brand-info h1 {
+      font-size: 1.35rem;
+      font-weight: 800;
+      letter-spacing: 0.2px;
     }
-    .preset-btn:hover { border-color: var(--accent); background: #0f172a; }
-    .grid { display: grid; grid-template-columns: 1.05fr 1.15fr; gap: 22px; }
-    @media (max-width: 900px) { .grid { grid-template-columns: 1fr; } }
-    .card { background: var(--panel); border: 1px solid var(--border); border-radius: 10px; padding: 20px; }
-    .card h2 {
-      font-size: 0.95rem; text-transform: uppercase; letter-spacing: 0.6px;
-      color: var(--accent); margin-bottom: 16px; border-bottom: 1px solid var(--border); padding-bottom: 8px;
+    .brand-info h1 span {
+      color: var(--accent);
     }
-    .form-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; }
-    .form-group { display: flex; flex-direction: column; }
-    .form-group.full { grid-column: span 2; }
-    label { font-size: 0.78rem; color: var(--muted); margin-bottom: 4px; font-weight: 600; }
-    input, select {
-      background: #0f172a; border: 1px solid var(--border); color: var(--text);
-      padding: 8px 10px; border-radius: 6px; font-size: 0.9rem;
+    .brand-info p {
+      font-size: 0.82rem;
+      color: var(--text-muted);
+      margin-top: 2px;
+      display: flex;
+      align-items: center;
+      flex-wrap: wrap;
+      gap: 4px;
     }
-    input:focus, select:focus { outline: none; border-color: var(--accent); }
+    .header-links {
+      display: flex;
+      gap: 10px;
+      align-items: center;
+    }
+    .pill-link {
+      color: var(--accent-blue);
+      text-decoration: none;
+      font-size: 0.78rem;
+      font-weight: 600;
+      padding: 6px 14px;
+      background: rgba(15, 23, 42, 0.6);
+      border: 1px solid var(--card-border);
+      border-radius: 20px;
+      transition: all 0.2s ease;
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+    }
+    .pill-link:hover {
+      background: rgba(56, 189, 248, 0.12);
+      border-color: var(--accent-blue);
+      color: #fff;
+    }
+
+    /* Small Info (i) Hover Tooltips */
+    .info-btn {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      width: 15px;
+      height: 15px;
+      border-radius: 50%;
+      background: rgba(148, 163, 184, 0.15);
+      border: 1px solid rgba(148, 163, 184, 0.3);
+      color: var(--accent-blue);
+      font-size: 0.65rem;
+      font-weight: 700;
+      font-family: 'JetBrains Mono', monospace;
+      cursor: help;
+      position: relative;
+      user-select: none;
+      vertical-align: middle;
+      margin-left: 6px;
+      transition: all 0.2s ease;
+      line-height: 1;
+    }
+    .info-btn:hover, .info-btn:focus {
+      background: var(--accent-blue);
+      color: #090e1a;
+      border-color: var(--accent-blue);
+    }
+    .info-btn .tooltip-text {
+      visibility: hidden;
+      opacity: 0;
+      width: 250px;
+      background: #0b1120;
+      color: #e2e8f0;
+      text-align: left;
+      font-family: 'Plus Jakarta Sans', sans-serif;
+      font-size: 0.74rem;
+      font-weight: 500;
+      line-height: 1.45;
+      padding: 10px 13px;
+      border-radius: 8px;
+      border: 1px solid rgba(56, 189, 248, 0.35);
+      box-shadow: 0 12px 28px rgba(0, 0, 0, 0.6), 0 0 14px rgba(56, 189, 248, 0.15);
+      position: absolute;
+      z-index: 999;
+      bottom: 135%;
+      left: 50%;
+      transform: translateX(-50%);
+      transition: opacity 0.2s ease, transform 0.2s ease;
+      pointer-events: none;
+      white-space: normal;
+    }
+    .info-btn .tooltip-text::after {
+      content: "";
+      position: absolute;
+      top: 100%;
+      left: 50%;
+      margin-left: -5px;
+      border-width: 5px;
+      border-style: solid;
+      border-color: #0b1120 transparent transparent transparent;
+    }
+    .info-btn:hover .tooltip-text, .info-btn:focus .tooltip-text {
+      visibility: visible;
+      opacity: 1;
+      transform: translateX(-50%) translateY(-2px);
+    }
+    .info-btn.tip-bottom .tooltip-text {
+      bottom: auto;
+      top: 135%;
+    }
+    .info-btn.tip-bottom .tooltip-text::after {
+      bottom: 100%;
+      top: auto;
+      border-color: transparent transparent #0b1120 transparent;
+    }
+    .info-btn.tip-left .tooltip-text {
+      left: auto;
+      right: 0;
+      transform: translateX(0);
+    }
+    .info-btn.tip-left .tooltip-text::after {
+      left: auto;
+      right: 6px;
+      margin-left: 0;
+    }
+
+    /* Model Performance Metrics Strip */
+    .metrics-strip {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+      gap: 12px;
+      margin-bottom: 18px;
+    }
+    .metric-chip {
+      background: var(--card-bg);
+      border: 1px solid var(--card-border);
+      backdrop-filter: blur(12px);
+      border-radius: 10px;
+      padding: 12px 16px;
+      display: flex;
+      flex-direction: column;
+      gap: 4px;
+    }
+    .metric-chip .chip-label {
+      font-size: 0.7rem;
+      text-transform: uppercase;
+      letter-spacing: 0.6px;
+      color: var(--text-dim);
+      font-weight: 600;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+    }
+    .metric-chip .chip-value {
+      font-size: 1.05rem;
+      font-weight: 700;
+      color: var(--text-main);
+      font-family: 'JetBrains Mono', monospace;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+    .status-dot {
+      width: 8px;
+      height: 8px;
+      border-radius: 50%;
+      background: var(--accent);
+      box-shadow: 0 0 10px var(--accent);
+      display: inline-block;
+    }
+
+    /* Live Market Feed & Action Banner */
+    .live-action-banner {
+      background: linear-gradient(135deg, rgba(16, 185, 129, 0.1) 0%, rgba(15, 23, 42, 0.8) 100%);
+      border: 1px solid rgba(16, 185, 129, 0.3);
+      border-radius: 12px;
+      padding: 14px 20px;
+      margin-bottom: 24px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      flex-wrap: wrap;
+      gap: 14px;
+      box-shadow: 0 4px 20px rgba(0, 0, 0, 0.25);
+    }
+    .live-status-group {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+    .live-indicator-pulse {
+      width: 10px;
+      height: 10px;
+      border-radius: 50%;
+      background: var(--accent);
+      box-shadow: 0 0 0 0 rgba(16, 185, 129, 0.7);
+      animation: pulse 1.8s infinite;
+    }
+    @keyframes pulse {
+      0% { box-shadow: 0 0 0 0 rgba(16, 185, 129, 0.7); }
+      70% { box-shadow: 0 0 0 8px rgba(16, 185, 129, 0); }
+      100% { box-shadow: 0 0 0 0 rgba(16, 185, 129, 0); }
+    }
+    .live-feed-title {
+      font-size: 0.88rem;
+      font-weight: 700;
+      color: #fff;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+    .live-feed-subtitle {
+      font-size: 0.72rem;
+      color: var(--text-muted);
+      font-family: 'JetBrains Mono', monospace;
+      margin-top: 2px;
+    }
+    .live-controls-group {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      flex-wrap: wrap;
+    }
+    .auto-sync-toggle {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      cursor: pointer;
+      font-size: 0.78rem;
+      color: var(--text-muted);
+      user-select: none;
+    }
+    .auto-sync-toggle input {
+      accent-color: var(--accent);
+      cursor: pointer;
+      width: 15px;
+      height: 15px;
+    }
+    .live-sync-btn {
+      background: linear-gradient(135deg, #059669 0%, #047857 100%);
+      color: #fff;
+      font-size: 0.78rem;
+      font-weight: 700;
+      padding: 8px 14px;
+      border-radius: 8px;
+      border: 1px solid rgba(16, 185, 129, 0.4);
+      cursor: pointer;
+      transition: all 0.2s ease;
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+    }
+    .live-sync-btn:hover {
+      background: linear-gradient(135deg, #10b981 0%, #059669 100%);
+      transform: translateY(-1px);
+      box-shadow: 0 4px 14px rgba(16, 185, 129, 0.3);
+    }
+    .portfolio-matrix-btn {
+      background: rgba(15, 23, 42, 0.8);
+      color: var(--accent-blue);
+      font-size: 0.78rem;
+      font-weight: 700;
+      padding: 8px 14px;
+      border-radius: 8px;
+      border: 1px solid rgba(56, 189, 248, 0.3);
+      cursor: pointer;
+      transition: all 0.2s ease;
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+    }
+    .portfolio-matrix-btn:hover {
+      background: rgba(56, 189, 248, 0.15);
+      color: #fff;
+      transform: translateY(-1px);
+    }
+
+    /* Main Grid */
+    .main-grid {
+      display: grid;
+      grid-template-columns: 1.05fr 1.15fr;
+      gap: 24px;
+      align-items: start;
+    }
+    @media (max-width: 992px) {
+      .main-grid { grid-template-columns: 1fr; }
+    }
+
+    .panel-card {
+      background: var(--card-bg);
+      border: 1px solid var(--card-border);
+      backdrop-filter: blur(16px);
+      border-radius: 16px;
+      padding: 24px;
+      box-shadow: 0 16px 36px rgba(0, 0, 0, 0.3);
+    }
+    .panel-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 20px;
+      padding-bottom: 12px;
+      border-bottom: 1px solid var(--card-border);
+    }
+    .panel-header h2 {
+      font-size: 1.05rem;
+      font-weight: 700;
+      letter-spacing: 0.3px;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    /* Form & Controls */
+    .field-group-title {
+      font-size: 0.72rem;
+      text-transform: uppercase;
+      font-weight: 700;
+      letter-spacing: 0.7px;
+      color: var(--accent-blue);
+      margin: 16px 0 10px;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+    .field-group-title:first-of-type { margin-top: 0; }
+
+    .control-row {
+      display: flex;
+      flex-direction: column;
+      gap: 6px;
+      margin-bottom: 14px;
+    }
+    .control-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+    .control-header label {
+      font-size: 0.8rem;
+      font-weight: 600;
+      color: var(--text-main);
+      display: flex;
+      align-items: center;
+    }
+    .control-header .hint-badge {
+      font-size: 0.72rem;
+      color: var(--text-dim);
+      font-family: 'JetBrains Mono', monospace;
+    }
+    .input-slider-wrap {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+    .input-slider-wrap input[type="range"] {
+      flex: 1;
+      height: 6px;
+      border-radius: 3px;
+      background: #1e293b;
+      outline: none;
+      -webkit-appearance: none;
+      accent-color: var(--accent);
+      cursor: pointer;
+    }
+    .input-slider-wrap input[type="number"] {
+      width: 78px;
+      background: #090e1a;
+      border: 1px solid var(--card-border);
+      color: #fff;
+      padding: 6px 8px;
+      border-radius: 6px;
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 0.82rem;
+      text-align: right;
+    }
+    .input-slider-wrap input[type="number"]:focus {
+      outline: none;
+      border-color: var(--accent);
+    }
+    select.select-sector {
+      width: 100%;
+      background: #090e1a;
+      border: 1px solid var(--card-border);
+      color: #fff;
+      padding: 10px 14px;
+      border-radius: 8px;
+      font-size: 0.9rem;
+      font-weight: 600;
+      cursor: pointer;
+    }
+    select.select-sector:focus {
+      outline: none;
+      border-color: var(--accent);
+    }
+
     .submit-btn {
-      width: 100%; margin-top: 18px; padding: 12px; background: var(--accent);
-      color: #042f2e; font-weight: 700; font-size: 0.95rem; border: none; border-radius: 6px;
-      cursor: pointer; letter-spacing: 0.4px;
+      width: 100%;
+      margin-top: 20px;
+      padding: 14px;
+      background: linear-gradient(135deg, #10b981 0%, #059669 100%);
+      color: #042f2e;
+      font-weight: 800;
+      font-size: 0.95rem;
+      border: none;
+      border-radius: 10px;
+      cursor: pointer;
+      letter-spacing: 0.4px;
+      box-shadow: 0 4px 20px var(--accent-glow);
+      transition: all 0.2s ease;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      gap: 8px;
     }
-    .submit-btn:hover { background: #2dd4bf; }
-    .kpi-row { display: grid; grid-template-columns: repeat(3, 1fr); gap: 12px; margin-bottom: 18px; }
-    .kpi { background: #0f172a; border: 1px solid var(--border); border-radius: 8px; padding: 12px; }
-    .kpi .k-label { font-size: 0.72rem; color: var(--muted); text-transform: uppercase; }
-    .kpi .k-val { font-size: 1.35rem; font-weight: 700; margin-top: 4px; }
-    .badge { display: inline-block; padding: 3px 9px; border-radius: 999px; font-size: 0.75rem; font-weight: 700; }
-    .badge-calm { background: rgba(16,185,129,0.18); color: #34d399; border: 1px solid #059669; }
-    .badge-stress { background: rgba(245,158,11,0.18); color: #fbbf24; border: 1px solid #d97706; }
-    .badge-crisis { background: rgba(239,68,68,0.18); color: #f87171; border: 1px solid #dc2626; }
-    .shap-list { margin-top: 10px; margin-bottom: 18px; }
-    .shap-item { margin-bottom: 10px; }
-    .shap-header { display: flex; justify-content: space-between; font-size: 0.8rem; margin-bottom: 3px; }
-    .bar-bg { background: #0f172a; height: 8px; border-radius: 4px; overflow: hidden; border: 1px solid #1e293b; }
-    .bar-fill { height: 100%; border-radius: 4px; }
-    .tips-box { background: #0f172a; border: 1px solid var(--border); border-radius: 8px; padding: 14px; }
-    .tips-box h3 { font-size: 0.82rem; color: var(--warn); text-transform: uppercase; margin-bottom: 8px; }
-    .tips-box ul { padding-left: 18px; font-size: 0.84rem; color: #e2e8f0; }
-    .tips-box li { margin-bottom: 6px; }
+    .submit-btn:hover {
+      background: linear-gradient(135deg, #34d399 0%, #10b981 100%);
+      transform: translateY(-1px);
+      box-shadow: 0 6px 24px rgba(16, 185, 129, 0.4);
+    }
+
+    /* Output Results Area */
+    .hero-verdict-card {
+      background: linear-gradient(145deg, rgba(30, 41, 59, 0.7), rgba(15, 23, 42, 0.9));
+      border: 1px solid rgba(255, 255, 255, 0.1);
+      border-radius: 14px;
+      padding: 20px;
+      margin-bottom: 20px;
+      display: flex;
+      flex-direction: column;
+      gap: 16px;
+    }
+    .verdict-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      flex-wrap: wrap;
+      gap: 10px;
+    }
+    .verdict-tag {
+      font-size: 1.15rem;
+      font-weight: 800;
+      letter-spacing: 0.3px;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+    .badge-regime {
+      font-size: 0.74rem;
+      font-weight: 700;
+      padding: 5px 12px;
+      border-radius: 20px;
+      letter-spacing: 0.5px;
+      text-transform: uppercase;
+      font-family: 'JetBrains Mono', monospace;
+      display: inline-flex;
+      align-items: center;
+    }
+    .badge-crisis {
+      background: var(--danger-glow);
+      border: 1px solid var(--danger);
+      color: #fca5a5;
+    }
+    .badge-stress {
+      background: rgba(251, 191, 36, 0.15);
+      border: 1px solid var(--warn);
+      color: #fde047;
+    }
+    .badge-calm {
+      background: var(--accent-glow);
+      border: 1px solid var(--accent);
+      color: #6ee7b7;
+    }
+
+    .hero-stats-row {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 14px;
+    }
+    .stat-box {
+      background: #090e1a;
+      border: 1px solid var(--card-border);
+      border-radius: 10px;
+      padding: 14px;
+      display: flex;
+      flex-direction: column;
+      gap: 4px;
+    }
+    .stat-box .sb-label {
+      font-size: 0.72rem;
+      text-transform: uppercase;
+      font-weight: 600;
+      color: var(--text-muted);
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+    }
+    .stat-box .sb-val {
+      font-size: 1.6rem;
+      font-weight: 800;
+      font-family: 'JetBrains Mono', monospace;
+    }
+
+    /* Weight Allocation Visualizer */
+    .tilt-visualizer {
+      background: #090e1a;
+      border: 1px solid var(--card-border);
+      border-radius: 10px;
+      padding: 14px;
+    }
+    .tilt-labels {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      font-size: 0.74rem;
+      color: var(--text-muted);
+      margin-bottom: 8px;
+    }
+    .tilt-bar-track {
+      background: #1e293b;
+      height: 12px;
+      border-radius: 6px;
+      overflow: hidden;
+      position: relative;
+    }
+    .tilt-bar-fill {
+      height: 100%;
+      border-radius: 6px;
+      transition: width 0.4s ease;
+      background: linear-gradient(90deg, #0284c7, var(--accent));
+    }
+    .tilt-marker {
+      position: absolute;
+      top: 0;
+      bottom: 0;
+      width: 2px;
+      background: #fff;
+      box-shadow: 0 0 6px #fff;
+    }
+    .tilt-legend {
+      display: flex;
+      justify-content: space-between;
+      font-size: 0.72rem;
+      color: var(--text-dim);
+      margin-top: 6px;
+    }
+
+    /* SHAP Drivers */
+    .shap-card {
+      margin-top: 20px;
+    }
+    .shap-title {
+      font-size: 0.78rem;
+      text-transform: uppercase;
+      font-weight: 700;
+      color: var(--text-muted);
+      margin-bottom: 12px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+    .shap-item {
+      margin-bottom: 12px;
+    }
+    .shap-header {
+      display: flex;
+      justify-content: space-between;
+      font-size: 0.8rem;
+      margin-bottom: 4px;
+      font-weight: 500;
+    }
+    .shap-val {
+      font-family: 'JetBrains Mono', monospace;
+      font-weight: 700;
+      font-size: 0.78rem;
+    }
+    .bar-bg {
+      background: #090e1a;
+      height: 8px;
+      border-radius: 4px;
+      overflow: hidden;
+      border: 1px solid rgba(255, 255, 255, 0.05);
+    }
+    .bar-fill {
+      height: 100%;
+      border-radius: 4px;
+      transition: width 0.4s ease;
+    }
+
+    /* Actionable Advice Box */
+    .tips-card {
+      margin-top: 22px;
+      background: rgba(15, 23, 42, 0.5);
+      border: 1px solid var(--card-border);
+      border-radius: 12px;
+      padding: 16px;
+    }
+    .tips-card h3 {
+      font-size: 0.78rem;
+      text-transform: uppercase;
+      letter-spacing: 0.6px;
+      color: var(--warn);
+      margin-bottom: 10px;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+    .tips-card ul {
+      list-style: none;
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+    }
+    .tips-card li {
+      font-size: 0.82rem;
+      color: #cbd5e1;
+      line-height: 1.45;
+      position: relative;
+      padding-left: 18px;
+    }
+    .tips-card li::before {
+      content: "▸";
+      position: absolute;
+      left: 0;
+      color: var(--accent-blue);
+      font-weight: bold;
+    }
+
+    /* 8-Sector Portfolio Matrix Section */
+    .portfolio-matrix-card {
+      margin-top: 26px;
+      background: var(--card-bg);
+      border: 1px solid var(--card-border);
+      backdrop-filter: blur(16px);
+      border-radius: 16px;
+      padding: 24px;
+      box-shadow: 0 16px 36px rgba(0, 0, 0, 0.3);
+    }
+    .table-responsive {
+      overflow-x: auto;
+      margin-top: 14px;
+    }
+    .matrix-table {
+      width: 100%;
+      border-collapse: collapse;
+      font-size: 0.82rem;
+      text-align: left;
+    }
+    .matrix-table th {
+      padding: 10px 12px;
+      font-size: 0.72rem;
+      text-transform: uppercase;
+      letter-spacing: 0.6px;
+      color: var(--text-dim);
+      border-bottom: 1px solid var(--card-border);
+      font-weight: 700;
+      white-space: nowrap;
+    }
+    .matrix-table td {
+      padding: 12px;
+      border-bottom: 1px solid rgba(148, 163, 184, 0.08);
+      color: var(--text-main);
+      vertical-align: middle;
+    }
+    .matrix-table tr:hover td {
+      background: rgba(30, 41, 59, 0.45);
+    }
+    .sector-badge-cell {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      font-weight: 700;
+    }
+    .sector-icon {
+      font-size: 1.15rem;
+    }
+    .ticker-sub {
+      font-size: 0.7rem;
+      color: var(--text-dim);
+      font-family: 'JetBrains Mono', monospace;
+    }
+    .mono-cell {
+      font-family: 'JetBrains Mono', monospace;
+      font-weight: 600;
+    }
+    .verdict-chip {
+      font-size: 0.7rem;
+      font-weight: 700;
+      padding: 3px 8px;
+      border-radius: 6px;
+      display: inline-block;
+      text-transform: uppercase;
+      letter-spacing: 0.4px;
+    }
+    .verdict-chip.chip-buy {
+      background: rgba(16, 185, 129, 0.15);
+      color: #6ee7b7;
+      border: 1px solid var(--accent);
+    }
+    .verdict-chip.chip-reduce {
+      background: rgba(244, 63, 94, 0.15);
+      color: #fca5a5;
+      border: 1px solid var(--danger);
+    }
+    .verdict-chip.chip-neutral {
+      background: rgba(148, 163, 184, 0.12);
+      color: #cbd5e1;
+      border: 1px solid rgba(148, 163, 184, 0.25);
+    }
+    .inspect-btn {
+      background: rgba(56, 189, 248, 0.1);
+      border: 1px solid rgba(56, 189, 248, 0.3);
+      color: var(--accent-blue);
+      font-size: 0.72rem;
+      font-weight: 600;
+      padding: 5px 12px;
+      border-radius: 6px;
+      cursor: pointer;
+      transition: all 0.2s ease;
+      display: inline-flex;
+      align-items: center;
+      gap: 4px;
+    }
+    .inspect-btn:hover {
+      background: var(--accent-blue);
+      color: #090e1a;
+      transform: translateY(-1px);
+    }
+
     .error-banner {
-      display: none; background: rgba(239,68,68,0.15); border: 1px solid var(--danger);
-      color: #fca5a5; padding: 10px; border-radius: 6px; margin-top: 12px; font-size: 0.84rem;
+      display: none;
+      background: rgba(244, 63, 94, 0.15);
+      border: 1px solid var(--danger);
+      color: #fca5a5;
+      padding: 12px 14px;
+      border-radius: 8px;
+      margin-top: 14px;
+      font-size: 0.84rem;
     }
   </style>
 </head>
 <body>
   <div class="container">
+    <!-- Header -->
     <header>
-      <div class="brand">
-        <h1>SENTINEL-<span>CAP</span> // QUANT MACRO TERMINAL</h1>
-        <p>Geopolitical Risk Transmission, Causal HMM Regimes &amp; Black-Litterman Sector Allocator</p>
+      <div class="brand-title">
+        <div class="logo-badge">SENTINEL-CAP</div>
+        <div class="brand-info">
+          <h1>Geopolitical Sector Allocation <span>Terminal</span></h1>
+          <p>
+            Black-Litterman Portfolio Shield &amp; Causal HMM Regime Detection
+            <span class="info-btn tip-bottom" tabindex="0">i
+              <span class="tooltip-text">
+                <strong>Institutional Framework:</strong> Blends market baseline weights with AI forecasts to optimize returns while limiting downside risk. <strong>Causal HMM</strong> detects whether the market is Calm, Stressed, or in Crisis using only historical data.
+              </span>
+            </span>
+          </p>
+        </div>
       </div>
-      <div class="nav-links">
-        <a href="/docs" target="_blank">Swagger API (/docs)</a>
-        <a href="/health" target="_blank">System Health (/health)</a>
+      <div class="header-links">
+        <a class="pill-link" href="/docs" target="_blank"><span>⚡</span> API Docs (/docs)</a>
+        <a class="pill-link" href="/health" target="_blank"><span>🩺</span> Health (/health)</a>
       </div>
     </header>
 
-    <div class="presets">
-      <span>Quick Scenarios:</span>
-      <button class="preset-btn" type="button" onclick="applyPreset('conflict_gold')">1. Armed Conflict Spike (GOLD Hedge)</button>
-      <button class="preset-btn" type="button" onclick="applyPreset('conflict_bank')">2. Armed Conflict Spike (BANKING Risk)</button>
-      <button class="preset-btn" type="button" onclick="applyPreset('calm_it')">3. Calm Bull Regime (IT Tailwind)</button>
+    <!-- Model Performance Strip (Presentation Metrics) -->
+    <div class="metrics-strip">
+      <div class="metric-chip">
+        <span class="chip-label">
+          <span>Active Serving Model</span>
+          <span class="info-btn tip-bottom" tabindex="0">i
+            <span class="tooltip-text">
+              <strong>XGBoost Regressor:</strong> A gradient-boosted decision tree algorithm trained on historical NSE sector returns, geopolitical spillover events, and news sentiment.
+            </span>
+          </span>
+        </span>
+        <span class="chip-value" id="modelTypeBadge"><span class="status-dot"></span> XGBoost</span>
+      </div>
+      <div class="metric-chip">
+        <span class="chip-label">
+          <span>Validation Error (RMSE)</span>
+          <span class="info-btn tip-bottom" tabindex="0">i
+            <span class="tooltip-text">
+              <strong>Root Mean Squared Error (205 bps = 2.05%):</strong> Measures the typical forecasting error size on unseen out-of-sample market testing. Lower is better.
+            </span>
+          </span>
+        </span>
+        <span class="chip-value" id="modelRmseBadge">0.0205 (205 bps)</span>
+      </div>
+      <div class="metric-chip">
+        <span class="chip-label">
+          <span>Information Coefficient (Rank IC)</span>
+          <span class="info-btn tip-bottom" tabindex="0">i
+            <span class="tooltip-text">
+              <strong>Spearman Rank Correlation:</strong> Measures how accurately the model ranks the 8 sectors from best to worst return. Positive score confirms predictive ranking power.
+            </span>
+          </span>
+        </span>
+        <span class="chip-value" id="modelRankIcBadge">+0.0044</span>
+      </div>
+      <div class="metric-chip">
+        <span class="chip-label">
+          <span>Benchmark Universe</span>
+          <span class="info-btn tip-bottom tip-left" tabindex="0">i
+            <span class="tooltip-text">
+              <strong>Neutral Starting Point:</strong> Equal-weighted allocation where each of the 8 NSE asset classes receives 12.5% (100% / 8). The model tilts weights relative to this baseline.
+            </span>
+          </span>
+        </span>
+        <span class="chip-value">8 NSE Sectors (12.5% Eq)</span>
+      </div>
     </div>
 
-    <div class="grid">
-      <div class="card">
-        <h2>1. Pre-Market State Vector (Data Contract)</h2>
+    <!-- Live Market Feed & Action Banner -->
+    <div class="live-action-banner" id="liveBanner">
+      <div class="live-status-group">
+        <span class="live-indicator-pulse"></span>
+        <div>
+          <div class="live-feed-title" id="liveFeedSource">Live Feed: Connected</div>
+          <div class="live-feed-subtitle" id="liveFeedTs">Streaming Live Indian Market Quotes &amp; Features</div>
+        </div>
+      </div>
+      <div class="live-controls-group">
+        <label class="auto-sync-toggle" title="Automatically fetches live parameters whenever target sector is changed">
+          <input type="checkbox" id="autoSyncToggle" checked onchange="toggleAutoSync()" />
+          <span>Auto-Sync on Sector Select</span>
+        </label>
+        <button class="live-sync-btn" type="button" id="liveSyncBtn" onclick="syncCurrentSectorLive()">
+          <span>⚡</span> Refresh Live Data
+        </button>
+        <button class="portfolio-matrix-btn" type="button" onclick="scrollToMatrix()">
+          <span>🌐</span> View 8-Sector Portfolio
+        </button>
+      </div>
+    </div>
+
+    <!-- Main Grid -->
+    <div class="main-grid">
+      <!-- Left Panel: Input Controls -->
+      <div class="panel-card">
+        <div class="panel-header">
+          <h2><span>⚙️</span> Pre-Market State Vector</h2>
+          <span style="font-size:0.75rem; color:var(--text-dim);" id="stateModeBadge">Live Parameters</span>
+        </div>
+
         <form id="predictForm">
-          <div class="form-grid">
-            <div class="form-group full">
-              <label for="sector_id">Target NSE Sector / Safe-Haven Proxy</label>
-              <select id="sector_id" name="sector_id">
-                <option value="GOLD">GOLD (GOLDBEES.NS - Safe Haven)</option>
-                <option value="BANKING">BANKING (BANKBEES.NS - Financials)</option>
-                <option value="ENERGY">ENERGY (CPSEETF.NS - Oil &amp; Gas)</option>
-                <option value="IT">IT (SETFNIFIT.NS - Tech Exports)</option>
-                <option value="INFRA">INFRA (INFRABEES.NS - Infrastructure)</option>
-                <option value="FMCG">FMCG (FMCGIETF.NS - Consumer)</option>
-                <option value="PHARMA">PHARMA (PHARMABEES.NS - Healthcare)</option>
-                <option value="GILT_DEBT">GILT_DEBT (GILTBEES.NS - Sovereign Debt)</option>
-              </select>
+          <div class="control-row">
+            <div class="control-header">
+              <label for="sector_id">
+                <span>Target NSE Sector / Safe-Haven</span>
+                <span class="info-btn" tabindex="0">i
+                  <span class="tooltip-text">
+                    The specific NSE sector ETF or safe-haven proxy being analyzed (e.g., BankBeES for Financials, GoldBeES for Gold).
+                  </span>
+                </span>
+              </label>
+              <span class="hint-badge">ETF Universe</span>
             </div>
-            <div class="form-group">
-              <label for="spillover_c1_armed_conflict">Armed Conflict Spillover [0 to 50]</label>
-              <input type="number" step="0.1" id="spillover_c1_armed_conflict" value="12.5" required />
+            <select id="sector_id" name="sector_id" class="select-sector" onchange="onSectorChange()">
+              <option value="BANKING">BANKING (BANKBEES.NS &bull; Financials)</option>
+              <option value="IT">IT (ITBEES.NS &bull; Tech Exports)</option>
+              <option value="ENERGY">ENERGY (CPSEETF.NS &bull; Oil &amp; Gas)</option>
+              <option value="INFRA">INFRA (INFRABEES.NS &bull; Infrastructure)</option>
+              <option value="FMCG">FMCG (FMCGIETF.NS &bull; Consumer Staples)</option>
+              <option value="PHARMA">PHARMA (PHARMABEES.NS &bull; Healthcare)</option>
+              <option value="GOLD">GOLD (GOLDBEES.NS &bull; Safe Haven)</option>
+              <option value="GILT_DEBT">GILT_DEBT (LTGILTBEES.NS &bull; Sovereign Bonds)</option>
+            </select>
+          </div>
+
+          <!-- Section 1: Geopolitics -->
+          <div class="field-group-title"><span>🌍</span> Geopolitics &amp; Sentiment Transmission</div>
+          
+          <div class="control-row">
+            <div class="control-header">
+              <label for="spillover_c1_armed_conflict">
+                <span>Armed Conflict Spillover (E_c1)</span>
+                <span class="info-btn" tabindex="0">i
+                  <span class="tooltip-text">
+                    Measures global armed conflicts and war intensity, weighted by geographic distance and decayed over time. High values favor defensive hedges like Gold.
+                  </span>
+                </span>
+              </label>
+              <span class="hint-badge" id="val_spillover">14.0</span>
             </div>
-            <div class="form-group">
-              <label for="regime_prob_crisis">HMM Crisis Probability [0.0 to 1.0]</label>
-              <input type="number" step="0.01" id="regime_prob_crisis" value="0.82" required />
-            </div>
-            <div class="form-group">
-              <label for="gpr_zscore_60d">Caldara GPR 60d Z-Score [-4 to 10]</label>
-              <input type="number" step="0.1" id="gpr_zscore_60d" value="2.4" required />
-            </div>
-            <div class="form-group">
-              <label for="finbert_sentiment">FinBERT Net Polarity [-1.0 to 1.0]</label>
-              <input type="number" step="0.05" id="finbert_sentiment" value="-0.45" required />
-            </div>
-            <div class="form-group">
-              <label for="vix_level">India VIX Level [8.0 to 90.0]</label>
-              <input type="number" step="0.5" id="vix_level" value="28.5" required />
-            </div>
-            <div class="form-group">
-              <label for="crude_mom_20d">20d Brent Crude Momentum [-1 to 1]</label>
-              <input type="number" step="0.01" id="crude_mom_20d" value="0.14" required />
-            </div>
-            <div class="form-group">
-              <label for="ret_lag_5d">Trailing 5d Sector Log Return [-0.5 to 0.5]</label>
-              <input type="number" step="0.005" id="ret_lag_5d" value="0.015" required />
-            </div>
-            <div class="form-group">
-              <label for="realized_vol_20d">20d Realized Volatility [0.01 to 1.5]</label>
-              <input type="number" step="0.01" id="realized_vol_20d" value="0.24" required />
+            <div class="input-slider-wrap">
+              <input type="range" id="rng_spillover" min="0" max="50" step="0.5" value="14.0" oninput="syncVal('spillover_c1_armed_conflict', this.value); onManualInput();" />
+              <input type="number" step="0.1" id="spillover_c1_armed_conflict" value="14.0" min="0" max="50" required oninput="syncSlider('rng_spillover', this.value); onManualInput();" />
             </div>
           </div>
-          <button type="submit" class="submit-btn">Compute Black-Litterman Signal &amp; SHAP</button>
+
+          <div class="control-row">
+            <div class="control-header">
+              <label for="gpr_zscore_60d">
+                <span>Caldara GPR Index (60d Z-Score)</span>
+                <span class="info-btn" tabindex="0">i
+                  <span class="tooltip-text">
+                    Geopolitical Risk Index: Compares today's geopolitical tension against the 60-day moving average in standard deviations. +2.0σ indicates elevated tension.
+                  </span>
+                </span>
+              </label>
+              <span class="hint-badge" id="val_gpr">+2.6σ</span>
+            </div>
+            <div class="input-slider-wrap">
+              <input type="range" id="rng_gpr" min="-4" max="10" step="0.1" value="2.6" oninput="syncVal('gpr_zscore_60d', this.value); onManualInput();" />
+              <input type="number" step="0.1" id="gpr_zscore_60d" value="2.6" min="-4" max="10" required oninput="syncSlider('rng_gpr', this.value); onManualInput();" />
+            </div>
+          </div>
+
+          <div class="control-row">
+            <div class="control-header">
+              <label for="finbert_sentiment">
+                <span>FinBERT News Sentiment Polarity</span>
+                <span class="info-btn" tabindex="0">i
+                  <span class="tooltip-text">
+                    AI Sentiment Score: Analyzes financial headlines with NLP from -1.0 (extremely negative/bearish) to +1.0 (strongly positive/bullish).
+                  </span>
+                </span>
+              </label>
+              <span class="hint-badge" id="val_sentiment">-0.50 (Bearish)</span>
+            </div>
+            <div class="input-slider-wrap">
+              <input type="range" id="rng_sentiment" min="-1" max="1" step="0.05" value="-0.50" oninput="syncVal('finbert_sentiment', this.value); onManualInput();" />
+              <input type="number" step="0.05" id="finbert_sentiment" value="-0.50" min="-1" max="1" required oninput="syncSlider('rng_sentiment', this.value); onManualInput();" />
+            </div>
+          </div>
+
+          <!-- Section 2: Macro & Regime -->
+          <div class="field-group-title"><span>📊</span> Market Regimes &amp; Macro Shocks</div>
+
+          <div class="control-row">
+            <div class="control-header">
+              <label for="vix_level">
+                <span>India VIX Level</span>
+                <span class="info-btn" tabindex="0">i
+                  <span class="tooltip-text">
+                    The Market Fear Gauge: Annualized 30-day volatility implied by Nifty 50 options. Above 20 signals fear; below 15 indicates calm.
+                  </span>
+                </span>
+              </label>
+              <span class="hint-badge" id="val_vix">29.0</span>
+            </div>
+            <div class="input-slider-wrap">
+              <input type="range" id="rng_vix" min="8" max="90" step="0.5" value="29.0" oninput="syncVal('vix_level', this.value); onManualInput();" />
+              <input type="number" step="0.5" id="vix_level" value="29.0" min="8" max="90" required oninput="syncSlider('rng_vix', this.value); onManualInput();" />
+            </div>
+          </div>
+
+          <div class="control-row">
+            <div class="control-header">
+              <label for="regime_prob_crisis">
+                <span>HMM Crisis Regime Probability</span>
+                <span class="info-btn" tabindex="0">i
+                  <span class="tooltip-text">
+                    The probability (0% to 100%) that the market is in a high-volatility Crisis state, triggering automatic risk reduction and safe-haven rotation.
+                  </span>
+                </span>
+              </label>
+              <span class="hint-badge" id="val_crisis">85%</span>
+            </div>
+            <div class="input-slider-wrap">
+              <input type="range" id="rng_crisis" min="0" max="1" step="0.01" value="0.85" oninput="syncVal('regime_prob_crisis', this.value); onManualInput();" />
+              <input type="number" step="0.01" id="regime_prob_crisis" value="0.85" min="0" max="1" required oninput="syncSlider('rng_crisis', this.value); onManualInput();" />
+            </div>
+          </div>
+
+          <div class="control-row">
+            <div class="control-header">
+              <label for="crude_mom_20d">
+                <span>20d Brent Crude Oil Momentum</span>
+                <span class="info-btn" tabindex="0">i
+                  <span class="tooltip-text">
+                    Trailing 20-day percentage price change in international Brent crude oil. Oil price spikes hurt importers like Banking/FMCG but aid Energy.
+                  </span>
+                </span>
+              </label>
+              <span class="hint-badge" id="val_crude">+16.0%</span>
+            </div>
+            <div class="input-slider-wrap">
+              <input type="range" id="rng_crude" min="-1" max="1" step="0.02" value="0.16" oninput="syncVal('crude_mom_20d', this.value); onManualInput();" />
+              <input type="number" step="0.01" id="crude_mom_20d" value="0.16" min="-1" max="1" required oninput="syncSlider('rng_crude', this.value); onManualInput();" />
+            </div>
+          </div>
+
+          <!-- Section 3: Sector Momentum -->
+          <div class="field-group-title"><span>📈</span> Sector Trend &amp; Volatility</div>
+
+          <div class="control-row">
+            <div class="control-header">
+              <label for="ret_lag_5d">
+                <span>Trailing 5d Sector Return</span>
+                <span class="info-btn" tabindex="0">i
+                  <span class="tooltip-text">
+                    Recent price change of this sector ETF over the past 5 trading sessions.
+                  </span>
+                </span>
+              </label>
+              <span class="hint-badge" id="val_ret">+1.8%</span>
+            </div>
+            <div class="input-slider-wrap">
+              <input type="range" id="rng_ret" min="-0.5" max="0.5" step="0.005" value="0.018" oninput="syncVal('ret_lag_5d', this.value); onManualInput();" />
+              <input type="number" step="0.005" id="ret_lag_5d" value="0.018" min="-0.5" max="0.5" required oninput="syncSlider('rng_ret', this.value); onManualInput();" />
+            </div>
+          </div>
+
+          <div class="control-row">
+            <div class="control-header">
+              <label for="realized_vol_20d">
+                <span>20d Realized Volatility</span>
+                <span class="info-btn" tabindex="0">i
+                  <span class="tooltip-text">
+                    Annualized price fluctuations over the last 20 trading sessions. Lower volatility allows the model to allocate higher position weights.
+                  </span>
+                </span>
+              </label>
+              <span class="hint-badge" id="val_vol">22.0%</span>
+            </div>
+            <div class="input-slider-wrap">
+              <input type="range" id="rng_vol" min="0.01" max="1.5" step="0.01" value="0.22" oninput="syncVal('realized_vol_20d', this.value); onManualInput();" />
+              <input type="number" step="0.01" id="realized_vol_20d" value="0.22" min="0.01" max="1.5" required oninput="syncSlider('rng_vol', this.value); onManualInput();" />
+            </div>
+          </div>
+
+          <button type="submit" class="submit-btn">
+            <span>✨</span> Calculate Black-Litterman Allocation
+          </button>
           <div id="errorBanner" class="error-banner"></div>
         </form>
       </div>
 
-      <div class="card">
-        <h2>2. Model Output, TreeSHAP Drivers &amp; Allocation Tips</h2>
-        <div class="kpi-row">
-          <div class="kpi">
-            <div class="k-label">5d Excess Return</div>
-            <div class="k-val" id="kpiBps">+0.0 bps</div>
+      <!-- Right Panel: Model Output & Presentation -->
+      <div class="panel-card">
+        <div class="panel-header">
+          <h2><span>📊</span> Tactical Allocation Decision</h2>
+          <span style="font-size:0.75rem; color:var(--text-dim);" id="modelVersion">Model v1.0</span>
+        </div>
+
+        <!-- Hero Verdict Box -->
+        <div class="hero-verdict-card">
+          <div class="verdict-header">
+            <div class="verdict-tag" id="verdictBadge">
+              <span id="verdictIcon">🟢</span>
+              <span id="kpiVerdict">OVERWEIGHT (BUY TILT)</span>
+              <span class="info-btn" tabindex="0">i
+                <span class="tooltip-text">
+                  <strong>Tactical Stance:</strong> OVERWEIGHT indicates the model expects this sector to beat the market. UNDERWEIGHT means reducing exposure. NEUTRAL maintains standard 12.5% weighting.
+                </span>
+              </span>
+            </div>
+            <span id="kpiRegime" class="badge-regime badge-crisis">
+              <span>CRISIS REGIME</span>
+              <span class="info-btn" style="margin-left:4px;" tabindex="0">i
+                <span class="tooltip-text">
+                  <strong>Macro Regime:</strong> CALM (growth environment), STRESSED (elevated caution), or CRISIS (defensive preservation).
+                </span>
+              </span>
+            </span>
           </div>
-          <div class="kpi">
-            <div class="k-label">Target BL Weight</div>
-            <div class="k-val" id="kpiWeight" style="color: var(--accent);">12.5%</div>
+
+          <div class="hero-stats-row">
+            <div class="stat-box">
+              <span class="sb-label">
+                <span>5-Day Expected Alpha</span>
+                <span class="info-btn" tabindex="0">i
+                  <span class="tooltip-text">
+                    Forecasted excess return relative to the Nifty 50 over the next 5 days. Expressed in basis points (100 bps = 1.00%).
+                  </span>
+                </span>
+              </span>
+              <span class="sb-val" id="kpiBps" style="color: var(--accent);">+38.5 bps</span>
+            </div>
+            <div class="stat-box">
+              <span class="sb-label">
+                <span>Black-Litterman Target</span>
+                <span class="info-btn tip-left" tabindex="0">i
+                  <span class="tooltip-text">
+                    Optimized portfolio weight calculated by the Black-Litterman algorithm, capped between 0% and 35% to prevent over-concentration.
+                  </span>
+                </span>
+              </span>
+              <span class="sb-val" id="kpiWeight" style="color: var(--accent-blue);">18.2%</span>
+            </div>
           </div>
-          <div class="kpi">
-            <div class="k-label">Latent Market State</div>
-            <div style="margin-top: 8px;"><span id="kpiRegime" class="badge badge-crisis">CRISIS REGIME</span></div>
+
+          <!-- Visual Tilt Bar: Benchmark vs Recommended -->
+          <div class="tilt-visualizer">
+            <div class="tilt-labels">
+              <span>
+                Benchmark (Neutral: 12.5%)
+                <span class="info-btn" tabindex="0">i
+                  <span class="tooltip-text">
+                    Active tilt is the difference from the neutral 12.5% benchmark weight. For example, an 18.2% target represents a +5.7% overweight tilt.
+                  </span>
+                </span>
+              </span>
+              <span id="tiltText" style="color: var(--accent); font-weight:700;">+5.7% Active Tilt</span>
+            </div>
+            <div class="tilt-bar-track">
+              <div class="tilt-bar-fill" id="tiltBarFill" style="width: 52%;"></div>
+              <div class="tilt-marker" style="left: 35.7%;" title="12.5% Benchmark Weight"></div>
+            </div>
+            <div class="tilt-legend">
+              <span>0%</span>
+              <span style="color:#fff;">| 12.5% Equal-Weight</span>
+              <span>35% Cap</span>
+            </div>
           </div>
         </div>
-        <div style="font-size: 0.85rem; margin-bottom: 12px; color: var(--muted);">
-          Allocation Verdict: <strong id="kpiVerdict" style="color: #fff;">—</strong>
+
+        <!-- Explainable AI (TreeSHAP Attributions) -->
+        <div class="shap-card">
+          <div class="shap-title">
+            <span>
+              <span>🔍 Key Predictive Drivers (TreeSHAP Impact)</span>
+              <span class="info-btn" tabindex="0">i
+                <span class="tooltip-text">
+                  <strong>Explainable AI:</strong> TreeSHAP breaks down the prediction, showing exactly how many basis points each specific feature (e.g., War, VIX, Sentiment) contributed to the final forecast.
+                </span>
+              </span>
+            </span>
+            <span style="font-size:0.7rem; color:var(--text-dim);">Basis Points</span>
+          </div>
+          <div id="shapContainer"></div>
         </div>
-        <h3 style="font-size: 0.8rem; text-transform: uppercase; color: var(--muted); margin-bottom: 6px;">
-          Top Live TreeSHAP Feature Attributions (bps)
-        </h3>
-        <div id="shapContainer" class="shap-list"></div>
-        <div class="tips-box">
-          <h3>Rule-Based Portfolio Execution Tips</h3>
+
+        <!-- Tactical Rules & Execution Tips -->
+        <div class="tips-card">
+          <h3>
+            <span>🛡️ Portfolio Execution Strategy</span>
+            <span class="info-btn" tabindex="0">i
+              <span class="tooltip-text">
+                Rules-based execution guidance to prevent excessive portfolio turnover, manage trading costs, and handle safe-haven liquidity.
+              </span>
+            </span>
+          </h3>
           <ul id="tipsList">
             <li>Submit a pre-market state vector to generate Black-Litterman execution guidance.</li>
           </ul>
         </div>
       </div>
     </div>
+
+    <!-- 8-Sector Tactical Allocation Matrix (Full Portfolio View) -->
+    <div class="portfolio-matrix-card" id="portfolioMatrixSection">
+      <div class="panel-header" style="margin-bottom:14px; flex-wrap:wrap; gap:12px;">
+        <div>
+          <h2>
+            <span>🌐</span> 8-Sector Cross-Asset Tactical Allocation Matrix (Live Market Execution)
+            <span class="info-btn tip-bottom" tabindex="0">i
+              <span class="tooltip-text">
+                Simultaneous real-time Black-Litterman optimization across the entire 8-sector universe based on live market indicators.
+              </span>
+            </span>
+          </h2>
+          <p style="font-size:0.78rem; color:var(--text-muted); margin-top:3px;">
+            Simultaneous Black-Litterman optimization across the entire NSE universe based on live market signals.
+          </p>
+        </div>
+        <div style="display:flex; gap:10px; align-items:center;">
+          <span class="badge-regime badge-calm" id="matrixTimestamp">Data Date: Live</span>
+          <button class="pill-link" type="button" style="cursor:pointer;" onclick="loadLivePortfolioMatrix()">🔄 Refresh Matrix</button>
+        </div>
+      </div>
+
+      <div class="table-responsive">
+        <table class="matrix-table">
+          <thead>
+            <tr>
+              <th>
+                Asset / Sector
+                <span class="info-btn" tabindex="0">i
+                  <span class="tooltip-text">The 8 liquid ETF instruments covering Indian equities, gold, and government debt.</span>
+                </span>
+              </th>
+              <th>
+                5d Ret / 20d Vol
+                <span class="info-btn" tabindex="0">i
+                  <span class="tooltip-text">Trailing 5-day return momentum alongside 20-day annualized realized volatility.</span>
+                </span>
+              </th>
+              <th>
+                India VIX
+                <span class="info-btn" tabindex="0">i
+                  <span class="tooltip-text">The market fear index implied by Nifty 50 options contracts.</span>
+                </span>
+              </th>
+              <th>
+                Predicted 5d Alpha
+                <span class="info-btn" tabindex="0">i
+                  <span class="tooltip-text">Model's forecasted 5-day excess return relative to Nifty 50 in basis points.</span>
+                </span>
+              </th>
+              <th>
+                BL Target Weight
+                <span class="info-btn" tabindex="0">i
+                  <span class="tooltip-text">Recommended portfolio weight percentage generated by the Black-Litterman engine.</span>
+                </span>
+              </th>
+              <th>
+                Active Tilt vs Neutral
+                <span class="info-btn" tabindex="0">i
+                  <span class="tooltip-text">Overweight (+) or Underweight (-) deviation compared to the 12.5% neutral baseline.</span>
+                </span>
+              </th>
+              <th>
+                Verdict
+                <span class="info-btn" tabindex="0">i
+                  <span class="tooltip-text">Actionable stance: OVERWEIGHT (buy tilt), UNDERWEIGHT (reduce), or NEUTRAL.</span>
+                </span>
+              </th>
+              <th>Action</th>
+            </tr>
+          </thead>
+          <tbody id="matrixTableBody">
+            <tr>
+              <td colspan="8" style="text-align:center; padding:24px; color:var(--text-muted);">
+                ⚡ Loading 8-sector live allocation matrix...
+              </td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
   </div>
 
   <script>
-    const PRESETS = {
-      conflict_gold: {
-        sector_id: "GOLD", ret_lag_5d: 0.018, realized_vol_20d: 0.22,
-        vix_level: 29.0, crude_mom_20d: 0.16, gpr_zscore_60d: 2.6,
-        finbert_sentiment: -0.50, spillover_c1_armed_conflict: 14.0, regime_prob_crisis: 0.85
-      },
-      conflict_bank: {
-        sector_id: "BANKING", ret_lag_5d: -0.025, realized_vol_20d: 0.34,
-        vix_level: 29.0, crude_mom_20d: 0.16, gpr_zscore_60d: 2.6,
-        finbert_sentiment: -0.50, spillover_c1_armed_conflict: 14.0, regime_prob_crisis: 0.85
-      },
-      calm_it: {
-        sector_id: "IT", ret_lag_5d: 0.022, realized_vol_20d: 0.15,
-        vix_level: 13.5, crude_mom_20d: -0.03, gpr_zscore_60d: -0.4,
-        finbert_sentiment: 0.55, spillover_c1_armed_conflict: 0.8, regime_prob_crisis: 0.08
-      }
+    // Friendly feature name mapping for presentations
+    const FEATURE_NAMES = {
+      spillover_c1_armed_conflict: "Armed Conflict Spillover (E_c1)",
+      gpr_zscore_60d: "Caldara GPR Index Shock",
+      finbert_sentiment: "FinBERT Headline Sentiment",
+      vix_level: "India VIX Market Volatility",
+      regime_prob_crisis: "HMM Crisis Regime Probability",
+      crude_mom_20d: "Brent Crude Oil Momentum",
+      ret_lag_5d: "5d Sector Return Momentum",
+      realized_vol_20d: "20d Realized Volatility",
+      sector_id: "Sector Baseline & Risk Premium"
     };
 
-    function applyPreset(key) {
-      const p = PRESETS[key];
-      for (const [k, v] of Object.entries(p)) {
-        document.getElementById(k).value = v;
-      }
+    const SECTOR_META = {
+      BANKING: { name: "Banking & Financials", ticker: "BANKBEES.NS", icon: "🏦" },
+      IT: { name: "Information Technology", ticker: "ITBEES.NS", icon: "💻" },
+      ENERGY: { name: "Energy & Oil/Gas", ticker: "CPSEETF.NS", icon: "🛢️" },
+      INFRA: { name: "Infrastructure", ticker: "INFRABEES.NS", icon: "🏗️" },
+      FMCG: { name: "Fast-Moving Consumer Goods", ticker: "FMCGIETF.NS", icon: "🛒" },
+      PHARMA: { name: "Healthcare & Pharma", ticker: "PHARMABEES.NS", icon: "💊" },
+      GOLD: { name: "Gold (Safe Haven)", ticker: "GOLDBEES.NS", icon: "🛡️" },
+      GILT_DEBT: { name: "Sovereign Gilt Debt", ticker: "LTGILTBEES.NS", icon: "🏛️" }
+    };
+
+    function syncVal(numId, val) {
+      document.getElementById(numId).value = val;
+      updateHintBadges();
+    }
+    function syncSlider(sliderId, val) {
+      document.getElementById(sliderId).value = val;
+      updateHintBadges();
+    }
+
+    function onManualInput() {
+      const stateBadge = document.getElementById("stateModeBadge");
+      if (stateBadge) stateBadge.textContent = "What-If Simulation";
       runPrediction();
+    }
+
+    function updateHintBadges() {
+      const gpr = parseFloat(document.getElementById("gpr_zscore_60d").value);
+      document.getElementById("val_gpr").textContent = (gpr >= 0 ? "+" : "") + gpr.toFixed(1) + "σ";
+
+      const sent = parseFloat(document.getElementById("finbert_sentiment").value);
+      const sentLabel = sent >= 0.15 ? "Bullish" : sent <= -0.15 ? "Bearish" : "Neutral";
+      document.getElementById("val_sentiment").textContent = `${sent.toFixed(2)} (${sentLabel})`;
+
+      const vix = parseFloat(document.getElementById("vix_level").value);
+      document.getElementById("val_vix").textContent = vix.toFixed(1);
+
+      const crisis = parseFloat(document.getElementById("regime_prob_crisis").value);
+      document.getElementById("val_crisis").textContent = `${Math.round(crisis * 100)}%`;
+
+      const crude = parseFloat(document.getElementById("crude_mom_20d").value);
+      document.getElementById("val_crude").textContent = (crude >= 0 ? "+" : "") + (crude * 100).toFixed(1) + "%";
+
+      const ret = parseFloat(document.getElementById("ret_lag_5d").value);
+      document.getElementById("val_ret").textContent = (ret >= 0 ? "+" : "") + (ret * 100).toFixed(1) + "%";
+
+      const vol = parseFloat(document.getElementById("realized_vol_20d").value);
+      document.getElementById("val_vol").textContent = (vol * 100).toFixed(1) + "%";
+
+      const spill = parseFloat(document.getElementById("spillover_c1_armed_conflict").value);
+      document.getElementById("val_spillover").textContent = spill.toFixed(1);
+    }
+
+    function toggleAutoSync() {
+      const isAuto = document.getElementById("autoSyncToggle").checked;
+      if (isAuto) {
+        syncCurrentSectorLive();
+      }
+    }
+
+    function onSectorChange() {
+      const isAuto = document.getElementById("autoSyncToggle")?.checked;
+      if (isAuto) {
+        syncCurrentSectorLive();
+      } else {
+        runPrediction();
+      }
+    }
+
+    function scrollToMatrix() {
+      document.getElementById("portfolioMatrixSection").scrollIntoView({ behavior: "smooth", block: "start" });
+    }
+
+    async function syncCurrentSectorLive(targetSector = null) {
+      const sectorId = targetSector || document.getElementById("sector_id").value;
+      if (targetSector) {
+        document.getElementById("sector_id").value = targetSector;
+      }
+
+      const syncBtn = document.getElementById("liveSyncBtn");
+      if (syncBtn) syncBtn.innerHTML = `<span>⏳</span> Refreshing...`;
+
+      try {
+        const res = await fetch(`/live-market/${sectorId}`);
+        if (!res.ok) throw new Error("HTTP " + res.status);
+        const data = await res.json();
+
+        // Populate inputs
+        const inputs = data.inputs;
+        for (const [k, v] of Object.entries(inputs)) {
+          const inputEl = document.getElementById(k);
+          if (inputEl) inputEl.value = v;
+
+          const shortKey = k.replace("spillover_c1_armed_conflict", "spillover")
+                            .replace("gpr_zscore_60d", "gpr")
+                            .replace("finbert_sentiment", "sentiment")
+                            .replace("vix_level", "vix")
+                            .replace("regime_prob_crisis", "crisis")
+                            .replace("crude_mom_20d", "crude")
+                            .replace("ret_lag_5d", "ret")
+                            .replace("realized_vol_20d", "vol");
+          const slider = document.getElementById("rng_" + shortKey);
+          if (slider) slider.value = v;
+        }
+
+        updateHintBadges();
+
+        const stateBadge = document.getElementById("stateModeBadge");
+        if (stateBadge) stateBadge.textContent = "Live Parameters";
+
+        const liveFeedSource = document.getElementById("liveFeedSource");
+        const liveFeedTs = document.getElementById("liveFeedTs");
+        if (liveFeedSource) liveFeedSource.textContent = `Live Feed: ${data.status_text}`;
+        if (liveFeedTs) liveFeedTs.textContent = `Timestamp: ${data.timestamp} • Active State Loaded`;
+
+        await runPrediction();
+      } catch (e) {
+        console.error("Live market sync failed", e);
+      } finally {
+        if (syncBtn) syncBtn.innerHTML = `<span>⚡</span> Refresh Live Data`;
+      }
+    }
+
+    async function loadLivePortfolioMatrix() {
+      const tbody = document.getElementById("matrixTableBody");
+      tbody.innerHTML = `<tr><td colspan="8" style="text-align:center; padding:24px; color:var(--text-muted);">⚡ Computing live Black-Litterman allocations across all 8 sectors...</td></tr>`;
+
+      try {
+        const res = await fetch("/live-portfolio");
+        if (!res.ok) throw new Error("HTTP " + res.status);
+        const data = await res.json();
+
+        const tsBadge = document.getElementById("matrixTimestamp");
+        if (tsBadge) tsBadge.textContent = `${data.status_text} (${data.timestamp})`;
+
+        const liveFeedSource = document.getElementById("liveFeedSource");
+        const liveFeedTs = document.getElementById("liveFeedTs");
+        if (liveFeedSource) liveFeedSource.textContent = `Live Feed: ${data.status_text}`;
+        if (liveFeedTs) liveFeedTs.textContent = `Timestamp: ${data.timestamp} • Engine Connected`;
+
+        tbody.innerHTML = "";
+        data.sectors.forEach((sec) => {
+          const meta = SECTOR_META[sec.sector_id] || { name: sec.sector_id, ticker: sec.sector_id, icon: "📊" };
+          const alphaSign = sec.predicted_excess_return_bps >= 0 ? "+" : "";
+          const alphaColor = sec.predicted_excess_return_bps >= 0 ? "var(--accent)" : "var(--danger)";
+
+          const tiltSign = sec.active_tilt_pct >= 0 ? "+" : "";
+          const tiltColor = sec.active_tilt_pct >= 0 ? "var(--accent)" : "var(--danger)";
+
+          let chipClass = "chip-neutral";
+          if (sec.signal_verdict.includes("OVERWEIGHT")) chipClass = "chip-buy";
+          else if (sec.signal_verdict.includes("UNDERWEIGHT")) chipClass = "chip-reduce";
+
+          const retSign = sec.ret_lag_5d >= 0 ? "+" : "";
+
+          const tr = document.createElement("tr");
+          tr.innerHTML = `
+            <td>
+              <div class="sector-badge-cell">
+                <span class="sector-icon">${meta.icon}</span>
+                <div>
+                  <div style="font-weight:700;">${sec.sector_id}</div>
+                  <div class="ticker-sub">${meta.ticker} &bull; ${meta.name}</div>
+                </div>
+              </div>
+            </td>
+            <td class="mono-cell">
+              <span style="color:${sec.ret_lag_5d >= 0 ? 'var(--accent)' : 'var(--danger)'};">${retSign}${(sec.ret_lag_5d * 100).toFixed(2)}%</span>
+              <span style="color:var(--text-dim); margin-left:4px;">(${(sec.realized_vol_20d * 100).toFixed(1)}% vol)</span>
+            </td>
+            <td class="mono-cell" style="color:var(--text-muted);">${sec.vix_level.toFixed(1)}</td>
+            <td class="mono-cell" style="color:${alphaColor}; font-weight:700;">${alphaSign}${sec.predicted_excess_return_bps.toFixed(1)} bps</td>
+            <td class="mono-cell" style="font-size:0.95rem; font-weight:700; color:var(--accent-blue);">${sec.recommended_bl_weight_pct.toFixed(1)}%</td>
+            <td class="mono-cell" style="color:${tiltColor}; font-weight:700;">${tiltSign}${sec.active_tilt_pct.toFixed(1)}%</td>
+            <td><span class="verdict-chip ${chipClass}">${sec.signal_verdict}</span></td>
+            <td>
+              <button class="inspect-btn" type="button" onclick="inspectSector('${sec.sector_id}')">
+                🔍 Deep Dive
+              </button>
+            </td>
+          `;
+          tbody.appendChild(tr);
+        });
+      } catch (e) {
+        tbody.innerHTML = `<tr><td colspan="8" style="text-align:center; padding:18px; color:var(--danger);">Failed to load live portfolio: ${e.message}</td></tr>`;
+      }
+    }
+
+    async function inspectSector(sectorId) {
+      await syncCurrentSectorLive(sectorId);
+      document.getElementById("predictForm").scrollIntoView({ behavior: "smooth", block: "start" });
+    }
+
+    // Load server model metadata on startup
+    async function loadHealthMetrics() {
+      try {
+        const res = await fetch("/health");
+        if (res.ok) {
+          const data = await res.json();
+          if (data.model_type) {
+            document.getElementById("modelTypeBadge").innerHTML = `<span class="status-dot"></span> ${data.model_type.toUpperCase()} Regressor`;
+          }
+          if (data.validation_rmse !== undefined) {
+            document.getElementById("modelRmseBadge").textContent = `${data.validation_rmse} (~${(data.validation_rmse * 10000).toFixed(0)} bps)`;
+          }
+          if (data.validation_rank_ic !== undefined) {
+            document.getElementById("modelRankIcBadge").textContent = `${data.validation_rank_ic >= 0 ? '+' : ''}${data.validation_rank_ic.toFixed(4)}`;
+          }
+        }
+      } catch (e) {
+        console.warn("Could not load /health metrics", e);
+      }
     }
 
     async function runPrediction() {
@@ -259,38 +1550,78 @@
           return;
         }
 
+        // Expected Alpha
         const bpsEl = document.getElementById("kpiBps");
         const sign = data.predicted_excess_return_bps >= 0 ? "+" : "";
         bpsEl.textContent = `${sign}${data.predicted_excess_return_bps.toFixed(1)} bps`;
-        bpsEl.style.color = data.predicted_excess_return_bps >= 0 ? "#10b981" : "#ef4444";
+        bpsEl.style.color = data.predicted_excess_return_bps >= 0 ? "var(--accent)" : "var(--danger)";
 
-        document.getElementById("kpiWeight").textContent = `${data.recommended_bl_weight_pct.toFixed(1)}%`;
-        document.getElementById("kpiVerdict").textContent = data.signal_verdict;
+        // Target BL Weight
+        const wPct = data.recommended_bl_weight_pct;
+        document.getElementById("kpiWeight").textContent = `${wPct.toFixed(1)}%`;
 
+        // Active Weight Tilt Bar
+        const maxCap = 35.0;
+        const fillWidth = Math.min(100, Math.max(0, (wPct / maxCap) * 100));
+        document.getElementById("tiltBarFill").style.width = `${fillWidth}%`;
+        const activeTilt = wPct - 12.5;
+        const tiltSign = activeTilt >= 0 ? "+" : "";
+        const tiltLabel = activeTilt >= 0 ? "Overweight Tilt" : "Underweight Tilt";
+        const tiltEl = document.getElementById("tiltText");
+        tiltEl.textContent = `${tiltSign}${activeTilt.toFixed(1)}% Active ${tiltLabel}`;
+        tiltEl.style.color = activeTilt >= 0 ? "var(--accent)" : "var(--danger)";
+
+        // Verdict Badge
+        const verdictEl = document.getElementById("kpiVerdict");
+        const iconEl = document.getElementById("verdictIcon");
+        verdictEl.textContent = data.signal_verdict;
+        if (data.signal_verdict.includes("OVERWEIGHT")) {
+          iconEl.textContent = "🟢";
+          verdictEl.style.color = "var(--accent)";
+        } else if (data.signal_verdict.includes("UNDERWEIGHT")) {
+          iconEl.textContent = "🔴";
+          verdictEl.style.color = "var(--danger)";
+        } else {
+          iconEl.textContent = "⚪";
+          verdictEl.style.color = "#e2e8f0";
+        }
+
+        // Regime Badge
         const regEl = document.getElementById("kpiRegime");
-        regEl.textContent = data.regime_state;
-        regEl.className = "badge " + (
+        regEl.querySelector("span").textContent = data.regime_state;
+        regEl.className = "badge-regime " + (
           data.regime_state.includes("CRISIS") ? "badge-crisis" :
           data.regime_state.includes("STRESSED") ? "badge-stress" : "badge-calm"
         );
 
+        if (data.model_version) {
+          document.getElementById("modelVersion").textContent = data.model_version;
+        }
+
+        // TreeSHAP Feature Attributions
         const shapDiv = document.getElementById("shapContainer");
         shapDiv.innerHTML = "";
         const maxAbs = Math.max(...data.top_shap_drivers.map(d => Math.abs(d.impact_bps)), 1);
         data.top_shap_drivers.forEach(d => {
           const pct = Math.min(100, (Math.abs(d.impact_bps) / maxAbs) * 100);
-          const color = d.impact_bps >= 0 ? "#10b981" : "#ef4444";
-          const s = d.impact_bps >= 0 ? "+" : "";
+          const isPositive = d.impact_bps >= 0;
+          const color = isPositive ? "var(--accent)" : "var(--danger)";
+          const s = isPositive ? "+" : "";
+          const friendlyName = FEATURE_NAMES[d.feature] || d.feature.replace(/_/g, " ");
+
           shapDiv.innerHTML += `
             <div class="shap-item">
               <div class="shap-header">
-                <span>${d.feature}</span>
-                <span style="color:${color}; font-weight:700;">${s}${d.impact_bps.toFixed(2)} bps</span>
+                <span>${friendlyName}</span>
+                <span class="shap-val" style="color:${color};">${s}${d.impact_bps.toFixed(1)} bps</span>
               </div>
-              <div class="bar-bg"><div class="bar-fill" style="width:${pct}%; background:${color};"></div></div>
+              <div class="bar-bg">
+                <div class="bar-fill" style="width:${pct}%; background:${color};"></div>
+              </div>
             </div>`;
         });
 
+        // Portfolio Execution Strategy
         const tipsUl = document.getElementById("tipsList");
         tipsUl.innerHTML = data.allocation_tips.map(t => `<li>${t}</li>`).join("");
       } catch (e) {
@@ -303,7 +1634,13 @@
       e.preventDefault();
       runPrediction();
     });
-    window.addEventListener("DOMContentLoaded", runPrediction);
+
+    window.addEventListener("DOMContentLoaded", async () => {
+      updateHintBadges();
+      loadHealthMetrics();
+      await syncCurrentSectorLive();
+      loadLivePortfolioMatrix();
+    });
   </script>
 </body>
 </html>

@@ -65,3 +65,32 @@ def test_invalid_sector_returns_422():
         "regime_prob_crisis": 0.1,
     }
     assert client.post("/predict", json=invalid_payload).status_code == 422
+
+
+def test_live_market_endpoint():
+    res = client.get("/live-market/GOLD")
+    assert res.status_code == 200
+    data = res.json()
+    assert "source" in data
+    assert "status_text" in data
+    assert "inputs" in data
+    assert data["inputs"]["sector_id"] == "GOLD"
+    assert "vix_level" in data["inputs"]
+
+    res_invalid = client.get("/live-market/INVALID_TICKER")
+    assert res_invalid.status_code == 400
+
+
+def test_live_portfolio_endpoint():
+    res = client.get("/live-portfolio")
+    assert res.status_code == 200
+    data = res.json()
+    assert "sectors" in data
+    assert len(data["sectors"]) == 8
+    sector_ids = {s["sector_id"] for s in data["sectors"]}
+    expected_sectors = {"BANKING", "IT", "ENERGY", "INFRA", "FMCG", "PHARMA", "GOLD", "GILT_DEBT"}
+    assert sector_ids == expected_sectors
+    for s in data["sectors"]:
+        assert "recommended_bl_weight_pct" in s
+        assert "active_tilt_pct" in s
+        assert "signal_verdict" in s
